@@ -32,7 +32,7 @@ Install
 
 The suggested way to install this is via the ``pip`` command as follows::
 
-	pip install the-collector
+	pip install the_collector
 
 Development
 ~~~~~~~~~~~~~
@@ -44,7 +44,27 @@ To submit git pulls, clone the repository and set it up as follows::
 	pip install -r requirements
 	pip install -e .
 
+Usage
+--------
 
+.. code-block:: python
+	from the_collector.bagit import Bag
+	import time
+
+	filename = 'robot-{}.json'.format(time.ctime().replace(' ', '-'))
+	bag = Bag(filename, ['imu', 'camera'])
+
+	try:
+		while True:
+			# read and get imu data: data = imu.read()
+			bag.push('imu', data)
+
+			# read camera: ret, frame = camera.read()
+			bag.push('camera', frame, stringify=True)
+	except KeyboardError:
+		bag.close()
+
+	bag.size()  # prints Bag size
 
 Change Log
 -------------

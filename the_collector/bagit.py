@@ -1,16 +1,11 @@
 #!/usr/bin/env python
 
 from __future__ import print_function, division
-# import shelve
 import cv2
 import time
 import numpy as np
 import os
-# import platform
-from nxp_imu import IMU
-import pycreate2
 import simplejson as json
-# import codecs
 import base64
 
 
@@ -38,11 +33,10 @@ ii = cv2.imdecode(ii, self.depth)
 
 class Bag(object):
 	written = False
+	data = {}
 
 	def __init__(self, filename, topics):
 		self.filename = filename
-		# self.reset()
-		self.data = {}
 		for key in topics:
 			self.data[key] = []
 		self.data['stringified'] = []
@@ -90,6 +84,8 @@ class Bag(object):
 	# 	self.written = False
 
 	def close(self):
+		if self.written:
+			return
 		# if not self.written:
 		# json.dump(self.data, codecs.open(self.filename, 'w', encoding='utf-8'))
 		with open(self.filename, 'wb') as f:
@@ -97,6 +93,7 @@ class Bag(object):
 		self.written = True
 
 	def read(self):
+		self.written = False
 		self.data = {}
 		with open(self.filename, 'rb') as f:
 			data = json.load(f)
@@ -117,5 +114,5 @@ class Bag(object):
 
 	def size(self):
 		size = os.path.getsize(self.filename)//(2**10)
-		print('{}: {} kb'.format(self.filename, size))
+		# print('{}: {} kb'.format(self.filename, size))
 		return size
