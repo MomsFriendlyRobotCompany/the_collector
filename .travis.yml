@@ -61,9 +61,8 @@ python:
 
 # install other libraries using pip
 install:
-    - pip install -U pip setuptools wheel
+    - pip install -U pip setuptools wheel nose
     - pip install -U -r requirements.txt
-    - pip install .
 
 # command to run tests
 script: nosetests -v -w tests test.py

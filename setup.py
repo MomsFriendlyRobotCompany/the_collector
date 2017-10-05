@@ -6,13 +6,13 @@
 
 from __future__ import print_function
 from setuptools import setup
-from the-collector.version import __version__ as VERSION
+from the_collector.version import __version__ as VERSION
 from build_utils import BuildCommand
 from build_utils import PublishCommand
 from build_utils import BinaryDistribution
 
 
-PACKAGE_NAME = 'the-collector'
+PACKAGE_NAME = 'the_collector'
 BuildCommand.pkg = PACKAGE_NAME
 PublishCommand.pkg = PACKAGE_NAME
 PublishCommand.version = VERSION
