@@ -1,8 +1,7 @@
-.. image:: https://raw.githubusercontent.com/MomsFriendlyRobotCompany/ins_nav/master/docs/pics/header.jpg
+.. image:: https://raw.githubusercontent.com/MomsFriendlyRobotCompany/the-collector/master/docs/pics/header.jpg
     :align: center
     :width: 300px
-    :target: https://github.com/MomsFriendlyRobotCompany/ins_nav
-    :alt: Infinity Stone: Space
+    :target: https://github.com/MomsFriendlyRobotCompany/the-collector
 
 The Collector
 =================
@@ -33,15 +32,15 @@ Install
 
 The suggested way to install this is via the ``pip`` command as follows::
 
-	pip install ins_nav
+	pip install the-collector
 
 Development
 ~~~~~~~~~~~~~
 
 To submit git pulls, clone the repository and set it up as follows::
 
-	git clone https://github.com/MomsFriendlyRobotCompany/ins_nav
-	cd ins_nav
+	git clone https://github.com/MomsFriendlyRobotCompany/the-collector
+	cd the-collector
 	pip install -r requirements
 	pip install -e .
 
@@ -51,7 +50,7 @@ Change Log
 -------------
 
 ========== ======= =============================
-2017-07-07 0.0.1   init
+2017-10-04 0.0.1   init
 ========== ======= =============================
 
 Software License
