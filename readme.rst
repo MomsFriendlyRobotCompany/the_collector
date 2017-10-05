@@ -1,4 +1,4 @@
-.. image:: https://raw.githubusercontent.com/MomsFriendlyRobotCompany/the-collector/master/docs/pics/header.jpg
+.. image:: https://raw.githubusercontent.com/MomsFriendlyRobotCompany/the-collector/master/pics/header.jpg
     :align: center
     :width: 300px
     :target: https://github.com/MomsFriendlyRobotCompany/the-collector
