@@ -60,7 +60,8 @@ Thus, for the camera, the Bag (which is a dictionary) would have an array of:
 
 	bag['camera'] = [[frame0, stamp], [frame1, stamp], ... ]
 
-where `stamp` is a time stamp. Now to save data to disk:
+where `stamp` is a time stamp and `frame` is an image from from a camera. Now 
+to save data to disk:
 
 .. code-block:: python
 
@@ -69,19 +70,19 @@ where `stamp` is a time stamp. Now to save data to disk:
 
 	filename = 'robot-{}.json'.format(time.ctime().replace(' ', '-'))
 	bag = Bag(filename, ['imu', 'camera'])
+	# camera images are binary arrays, we are going to base64 encode them
+	# so we can store them in a json file nicely
 	bag.stringify('camera')  # this can be a string or an array of keys
 
 	try:
 		while True:
 			# read and get imu data: data = imu.read()
-			bag.push('imu', data)  # always push (key, data)
+			bag.push('imu', data)  # always push (key, data), push will add a timestamp
 
 			# read camera: ret, frame = camera.read()
-			bag.push('camera', frame, stringify=True)
+			bag.push('camera', frame)
 	except KeyboardError:
 		bag.close()  # close actually writes the data to disk
-
-	bag.size()  # prints Bag size
 
 To read data from a bag file:
 
@@ -90,7 +91,7 @@ To read data from a bag file:
 	from the_collector.bagit import BagReader
 	
 	reader = BagReader()
-	data = reader.load('my_file.json')
+	data = reader.load('my_file.json')  # read in the file and conver to dict
 	
 	# now print everything out
 	for key, value in data.items():
