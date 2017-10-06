@@ -1,29 +1,49 @@
-from the_collector.bagit import Bag
+from the_collector.bagit import BagWriter, BagReader
 import os
+import numpy as np
 
 
-def test_dummy():
-	assert True
-
-
-def test_write():
+def rw(compress):
+	run_len = 100
 	filename = 'test.json'
-	bag = Bag(filename, ['data'])
+	depth = 3
+	row = 400
+	col = 500
+	image_size = (row, col, depth)
 
-	for i in range(200):
+	bag = BagWriter()
+	bag.open(['data', 'camera'])
+	bag.stringify('camera')
+	bag.use_compression = compress
+
+	for i in range(run_len):
 		# read and get imu data: data = imu.read()
 		bag.push('data', i)
 
-	bag.close()
+		frame = np.random.randint(0, 255, image_size)
+		bag.push('camera', frame)
+
+	try:
+		bag.write(filename)
+	except:
+		assert False
 
 	# data is a hash
 	# each key has an array: [data_point, time_stamp]
-	data = bag.read()
+	reader = BagReader()
+	reader.use_compression = compress
+	data = reader.load(filename)
 
-	for i in range(200):
-		# print(data['data'][i][0], i)
+	for i in range(run_len):
 		assert data['data'][i][0] == i
 
-	bag.close()
+		f = data['camera'][i][0]
+		print('size', f.shape, image_size, i)
+		assert f.shape == image_size
 
 	os.remove(filename)
+
+
+def test_write_load():
+	rw(True)
+	rw(False)

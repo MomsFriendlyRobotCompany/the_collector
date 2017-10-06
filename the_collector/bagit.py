@@ -7,6 +7,7 @@ import numpy as np
 import os
 import simplejson as json
 import base64
+import gzip  # compression
 
 
 """
@@ -31,19 +32,9 @@ ii = cv2.imdecode(ii, self.depth)
 """
 
 
-class Bag(object):
-	written = False
-	data = {}
-
-	def __init__(self, filename, topics):
-		self.filename = filename
-		for key in topics:
-			self.data[key] = []
-		self.data['stringified'] = []
-		self.encode = '.jpg'
-
-	def __del__(self):
-		self.close()
+class Base(object):
+	encode = '.jpg'
+	use_compression = True
 
 	def decodeB64(self, b64, depth):
 		"""base64 to OpenCV"""
@@ -61,21 +52,84 @@ class Bag(object):
 		b64 = base64.b64encode(jpeg)
 		return b64
 
-	def push(self, key, data, stringify=False):
-		# have to convert images (binary) to strings
-		if stringify:
-			# print('stringified')
-			data = self.encodeB64(data)
-			if key not in self.data['stringified']:
-				self.data['stringified'].append(key)
 
+class BagReader(Base):
+	def load(self, filename):
+		try:
+			if self.use_compression:
+				with gzip.open(filename, 'r') as f:
+					data = json.load(f)
+			else:
+				with open(filename, 'r') as f:
+					data = json.load(f)
+
+			for key in data['b64keys']:
+				tmp = []
+				for b64, datestamp in data[key]:
+					img = self.decodeB64(b64, 1)  # not sure depth is working
+					tmp.append((img, datestamp))
+				data[key] = tmp
+
+		except:
+			print('Error reading file: {}'.format(filename))
+			raise
+
+		return data
+
+
+class BagWriter(Base):
+
+	def __init__(self):
+		self.clear()
+
+	def __del__(self):
+		pass
+
+	def stringify(self, keys):
+		if type(keys) is list:
+			print('list', keys)
+			for key in keys:
+				self.data['b64keys'].append(key)
+		elif type(keys) is str:
+			print('str', keys)
+			self.data['b64keys'].append(keys)
+		else:
+			raise Exception('Bag::stringify, invalid input: {}'.format(keys))
+
+	def push(self, key, data):
 		if key in self.data:
+			# have to convert images (binary) to strings
+			if key in self.data['b64keys']:
+				data = self.encodeB64(data)
+
 			timestamp = time.time()
 			self.data[key].append((data, timestamp))
-			# print(key)
 		else:
 			raise Exception('Bag::push, Invalid key: {}'.format(key))
 
+	def clear(self):
+		self.data = {}
+		self.data['b64keys'] = []
+
+	def open(self, topics):
+		self.clear()
+		for key in topics:
+			self.data[key] = []
+
+	def write(self, filename):
+		"""
+		Once you close a bag, it is written to disk and the data is cleared
+		"""
+		if self.data == {}:
+			return
+
+		if self.use_compression:
+			with gzip.open(filename, 'w') as f:
+				json.dump(self.data, f)
+		else:
+			with open(filename, 'w') as f:
+				json.dump(self.data, f)
+	
 	# def reset(self):
 	# 	files = os.listdir('./')
 	# 	for f in files:
@@ -83,36 +137,7 @@ class Bag(object):
 	# 			os.remove(self.filename)
 	# 	self.written = False
 
-	def close(self):
-		if self.written:
-			return
-		# if not self.written:
-		# json.dump(self.data, codecs.open(self.filename, 'w', encoding='utf-8'))
-		with open(self.filename, 'wb') as f:
-			json.dump(self.data, f)
-		self.written = True
-
-	def read(self):
-		self.written = False
-		self.data = {}
-		with open(self.filename, 'rb') as f:
-			data = json.load(f)
-
-		# print(data)
-
-		for key in data['stringified']:
-			tmp = []
-			# print(key)
-			# print(data[key])
-			for b64, datestamp in data[key]:
-				img = self.decodeB64(b64, 1)
-				tmp.append((img, datestamp))
-			data[key] = tmp
-		self.data = data
-
-		return self.data
-
-	def size(self):
-		size = os.path.getsize(self.filename)//(2**10)
-		# print('{}: {} kb'.format(self.filename, size))
-		return size
+	# def size(self):
+	# 	size = os.path.getsize(self.filename)//(2**10)
+	# 	# print('{}: {} kb'.format(self.filename, size))
+	# 	return size

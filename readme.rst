@@ -47,6 +47,21 @@ To submit git pulls, clone the repository and set it up as follows::
 Usage
 --------
 
+This code saves data to a file with a time/date stamp in the name. Specifically,
+it is saving:
+
+- imu: accel, gyro, magnetometer
+- camera: raspberry pi images.
+
+Every time data is pushed into the Bag file, each data point is given a time stamp.
+Thus, for the camera, the Bag (which is a dictionary) would have an array of:
+
+.. code-block:: python
+
+	bag['camera'] = [[frame0, stamp], [frame1, stamp], ... ]
+
+where `stamp` is a time stamp
+
 .. code-block:: python
 	from the_collector.bagit import Bag
 	import time
