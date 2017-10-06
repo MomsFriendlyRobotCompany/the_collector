@@ -24,6 +24,10 @@ The Collector
 
 **This is still under heavy development**
 
+The idea behind this a container that can store data and time tag the data when
+it is captured. The main structure is a `dict` which has keys for each data
+series stored.
+
 Setup
 --------
 
@@ -47,8 +51,7 @@ To submit git pulls, clone the repository and set it up as follows::
 Usage
 --------
 
-This code saves data to a file with a time/date stamp in the name. Specifically,
-it is saving:
+In the code example below, sensor data is saved to a file. Specifically, it is saving:
 
 - imu: accel, gyro, magnetometer
 - camera: raspberry pi images.
@@ -59,30 +62,38 @@ Thus, for the camera, the Bag (which is a dictionary) would have an array of:
 .. code-block:: python
 
 	bag['camera'] = [[frame0, stamp], [frame1, stamp], ... ]
+	bag['imu'] = [[imu0, stamp], [imu1, stamp], ... ]
 
-where `stamp` is a time stamp and `frame` is an image from from a camera. Now 
-to save data to disk:
+where `stamp` is a time stamp, `frame` is an image from from a camera, and imu
+is an array of [accel, gyro, magnetometer] data. Now to save data to disk:
 
 .. code-block:: python
 
 	from the_collector.bagit import BagWriter
 	import time
 
+	# this file name gives a time/date when it was created
+	# you don't have to do this, 'data.json' would work fine too
 	filename = 'robot-{}.json'.format(time.ctime().replace(' ', '-'))
-	bag = Bag(filename, ['imu', 'camera'])
+	
+	# create the writer
+	bag = BagWriter(filename, ['imu', 'camera'])
+	
 	# camera images are binary arrays, we are going to base64 encode them
 	# so we can store them in a json file nicely
 	bag.stringify('camera')  # this can be a string or an array of keys
 
 	try:
 		while True:
-			# read and get imu data: data = imu.read()
-			bag.push('imu', data)  # always push (key, data), push will add a timestamp
+			# read and get imu data, say: data = imu.read()
+			# always push (key, data), push will add a timestamp
+			bag.push('imu', data)
 
-			# read camera: ret, frame = camera.read()
+			# read camera, say: ret, frame = camera.read()
 			bag.push('camera', frame)
+			
 	except KeyboardError:
-		bag.close()  # close actually writes the data to disk
+		bag.write()  # actually writes the data to disk
 
 To read data from a bag file:
 
