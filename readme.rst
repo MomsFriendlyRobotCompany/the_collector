@@ -60,26 +60,46 @@ Thus, for the camera, the Bag (which is a dictionary) would have an array of:
 
 	bag['camera'] = [[frame0, stamp], [frame1, stamp], ... ]
 
-where `stamp` is a time stamp
+where `stamp` is a time stamp. Now to save data to disk:
 
 .. code-block:: python
-	from the_collector.bagit import Bag
+
+	from the_collector.bagit import BagWriter
 	import time
 
 	filename = 'robot-{}.json'.format(time.ctime().replace(' ', '-'))
 	bag = Bag(filename, ['imu', 'camera'])
+	bag.stringify('camera')  # this can be a string or an array of keys
 
 	try:
 		while True:
 			# read and get imu data: data = imu.read()
-			bag.push('imu', data)
+			bag.push('imu', data)  # always push (key, data)
 
 			# read camera: ret, frame = camera.read()
 			bag.push('camera', frame, stringify=True)
 	except KeyboardError:
-		bag.close()
+		bag.close()  # close actually writes the data to disk
 
 	bag.size()  # prints Bag size
+
+To read data from a bag file:
+
+.. code-block:: python
+
+	from the_collector.bagit import BagReader
+	
+	reader = BagReader()
+	data = reader.load('my_file.json')
+	
+	# now print everything out
+	for key, value in data.items():
+		print('-- {} -----------------'.format(key))
+		for sample in value:
+			point, timestamp = sample
+			print(timestamp, point)
+		print('')
+	
 
 Change Log
 -------------
