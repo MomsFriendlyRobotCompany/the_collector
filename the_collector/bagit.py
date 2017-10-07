@@ -33,6 +33,8 @@ ii = cv2.imdecode(ii, self.depth)
 
 
 class Base(object):
+	"""
+	"""
 	encode = '.jpg'
 	use_compression = True
 
@@ -54,6 +56,8 @@ class Base(object):
 
 
 class BagReader(Base):
+	"""
+	"""
 	def load(self, filename):
 		try:
 			if self.use_compression:
@@ -78,6 +82,8 @@ class BagReader(Base):
 
 
 class BagWriter(Base):
+	"""
+	"""
 
 	def __init__(self):
 		self.clear()
