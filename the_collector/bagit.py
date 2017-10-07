@@ -36,7 +36,7 @@ class Base(object):
 	"""
 	"""
 	encode = '.jpg'
-	use_compression = True
+	use_compression = False
 
 	def decodeB64(self, b64, depth):
 		"""base64 to OpenCV"""
@@ -93,11 +93,11 @@ class BagWriter(Base):
 
 	def stringify(self, keys):
 		if type(keys) is list:
-			print('list', keys)
+			# print('list', keys)
 			for key in keys:
 				self.data['b64keys'].append(key)
 		elif type(keys) is str:
-			print('str', keys)
+			# print('str', keys)
 			self.data['b64keys'].append(keys)
 		else:
 			raise Exception('Bag::stringify, invalid input: {}'.format(keys))
@@ -139,7 +139,7 @@ class BagWriter(Base):
 				# json.dump(self.data, f)
 				s=json.dumps(self.data).encode('utf8')
 				f.write(s)
-	
+
 	# def reset(self):
 	# 	files = os.listdir('./')
 	# 	for f in files:

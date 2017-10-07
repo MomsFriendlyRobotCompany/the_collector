@@ -64,7 +64,7 @@ Thus, for the camera, the Bag (which is a dictionary) would have an array of:
 	bag['camera'] = [[frame0, stamp], [frame1, stamp], ... ]
 	bag['imu'] = [[imu0, stamp], [imu1, stamp], ... ]
 
-where `stamp` is a time stamp, `frame` is an image from from a camera, and imu
+where ``stamp`` is a time stamp, ``frame`` is an image from from a camera, and imu
 is an array of [accel, gyro, magnetometer] data. Now to save data to disk:
 
 .. code-block:: python
@@ -75,10 +75,11 @@ is an array of [accel, gyro, magnetometer] data. Now to save data to disk:
 	# this file name gives a time/date when it was created
 	# you don't have to do this, 'data.json' would work fine too
 	filename = 'robot-{}.json'.format(time.ctime().replace(' ', '-'))
-	
+
 	# create the writer
-	bag = BagWriter(filename, ['imu', 'camera'])
-	
+	bag = BagWriter()
+  bag.open(filename, ['imu', 'camera'])
+
 	# camera images are binary arrays, we are going to base64 encode them
 	# so we can store them in a json file nicely
 	bag.stringify('camera')  # this can be a string or an array of keys
@@ -91,7 +92,7 @@ is an array of [accel, gyro, magnetometer] data. Now to save data to disk:
 
 			# read camera, say: ret, frame = camera.read()
 			bag.push('camera', frame)
-			
+
 	except KeyboardError:
 		bag.write()  # actually writes the data to disk
 
@@ -100,10 +101,10 @@ To read data from a bag file:
 .. code-block:: python
 
 	from the_collector.bagit import BagReader
-	
+
 	reader = BagReader()
 	data = reader.load('my_file.json')  # read in the file and conver to dict
-	
+
 	# now print everything out
 	for key, value in data.items():
 		print('-- {} -----------------'.format(key))
@@ -111,7 +112,23 @@ To read data from a bag file:
 			point, timestamp = sample
 			print(timestamp, point)
 		print('')
-	
+
+Compression
+~~~~~~~~~~~~~~
+
+You can turn on or off compress to reduce file size. If you use the compression,
+then it really **isn't a json file anymore**. Thus, other programs won't be able
+to read it.
+
+.. code-block:: python
+
+  bag = BagWriter()           # or BagReader()
+  bag.use_compression = True  # or False (default)
+
+Examples
+---------
+
+See ``examples`` folder	examples how to capture images and record them.
 
 Change Log
 -------------
