@@ -53,7 +53,9 @@ def test_write_load():
 
 
 def test_circularBuff():
-	cb = CircularBuffer(10)
+	cb_len = 10
+	cb = CircularBuffer(cb_len)
+	assert len(cb._data) == cb_len
 
 	# should push 0 - 99
 	for i in range(100):

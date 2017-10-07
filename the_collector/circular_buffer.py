@@ -9,7 +9,7 @@ class CircularBuffer(object):
 		"""initialization"""
 		self.index = 1
 		self.size = size
-		self._data = [0.0, 0.0]
+		self._data = [0.0]*size
 		self.sum = 0.0
 		self.min = 1E900
 		self.max = -1E900
@@ -22,15 +22,16 @@ class CircularBuffer(object):
 		self.max = value if value > self.max else self.max
 		self.min = value if value < self.min else self.min
 
-		if len(self._data) == self.size:
-			self._data[self.index] = value
-		else:
-			self._data.append(value)
+		# if len(self._data) == self.size:
+		self._data[self.index] = value
+		# else:
+		# 	self._data.append(value)
 		self.index = (self.index + 1) % self.size
 
 	def __getitem__(self, key):
 		"""get element by index like a regular array"""
-		return(self._data[key])
+		i = self.index + key
+		return(self._data[i])
 
 	def __repr__(self):
 		"""return string representation"""
