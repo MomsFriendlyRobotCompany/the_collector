@@ -6,7 +6,7 @@
 
 from __future__ import print_function
 from setuptools import setup
-from the_collector.version import __version__ as VERSION
+from the_collector import __version__ as VERSION
 from build_utils import BuildCommand
 from build_utils import PublishCommand
 from build_utils import BinaryDistribution

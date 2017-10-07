@@ -1,4 +1,6 @@
-from the_collector.bagit import BagWriter, BagReader
+from __future__ import print_function, division
+from the_collector import BagWriter, BagReader
+from the_collector import CircularBuffer
 import os
 import numpy as np
 
@@ -20,6 +22,7 @@ def rw(compress):
 		# read and get imu data: data = imu.read()
 		bag.push('data', i)
 
+		# create image of random(0, 255) of size image_size
 		frame = np.random.randint(0, 255, image_size)
 		bag.push('camera', frame)
 
@@ -47,3 +50,17 @@ def rw(compress):
 def test_write_load():
 	rw(True)
 	rw(False)
+
+
+def test_circularBuff():
+	cb = CircularBuffer(10)
+
+	# should push 0 - 99
+	for i in range(100):
+		cb.push(i)
+
+	# buffer should only have 90-99 in it
+	data = cb.get_all()
+
+	for i, p in enumerate(range(90, 100)):
+		assert data[i] == p

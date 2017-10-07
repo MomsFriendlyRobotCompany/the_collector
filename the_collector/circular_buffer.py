@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
-import sparkline
+# import sparkline
 
 
 class CircularBuffer(object):
@@ -51,9 +51,9 @@ class CircularBuffer(object):
 	def get_first(self):
 		return self._data[self.index]
 
-	def spark(self):
-		data = self.get_all()
-		return sparkline.sparkify(data).encode('utf-8')
+	# def spark(self):
+	# 	data = self.get_all()
+	# 	return sparkline.sparkify(data).encode('utf-8')
 
 
 if __name__ == "__main__":
@@ -66,5 +66,5 @@ if __name__ == "__main__":
 	print('get cb[7]', cb[7])
 	print('get cb[0]', cb[0])
 	print('get last', cb.get_last())
-	print('ine', cb.get_last(), sparkline.sparkify(cb.get_all()).encode('utf-8'))
-	print(cb.get_first(), cb.spark(), cb.get_last())
+	# print('ine', cb.get_last(), sparkline.sparkify(cb.get_all()).encode('utf-8'))
+	# print(cb.get_first(), cb.spark(), cb.get_last())

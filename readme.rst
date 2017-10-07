@@ -78,7 +78,7 @@ is an array of [accel, gyro, magnetometer] data. Now to save data to disk:
 
 	# create the writer
 	bag = BagWriter()
-  bag.open(filename, ['imu', 'camera'])
+	bag.open(filename, ['imu', 'camera'])
 
 	# camera images are binary arrays, we are going to base64 encode them
 	# so we can store them in a json file nicely
@@ -122,8 +122,8 @@ to read it.
 
 .. code-block:: python
 
-  bag = BagWriter()           # or BagReader()
-  bag.use_compression = True  # or False (default)
+	bag = BagWriter()           # or BagReader()
+	bag.use_compression = True  # or False (default)
 
 Examples
 ---------
