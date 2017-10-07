@@ -126,12 +126,12 @@ class BagWriter(Base):
 		if self.use_compression:
 			with gzip.open(filename, 'wb') as f:
 				# json.dump(self.data, f)
-				s=json.dumps(data).encode('utf8')
+				s=json.dumps(self.data).encode('utf8')
 				f.write(s)
 		else:
 			with open(filename, 'wb') as f:
 				# json.dump(self.data, f)
-				s=json.dumps(data).encode('utf8')
+				s=json.dumps(self.data).encode('utf8')
 				f.write(s)
 	
 	# def reset(self):
