@@ -34,6 +34,11 @@ ii = cv2.imdecode(ii, self.depth)
 
 class Base(object):
 	"""
+	Base class. It holds the encode/decodeB64() functions.
+
+	Defaults:
+	  encode: .jpg
+	  use_compression: False
 	"""
 	encode = '.jpg'
 	use_compression = False
@@ -59,6 +64,10 @@ class BagReader(Base):
 	"""
 	"""
 	def load(self, filename):
+		"""
+		Given a filename, it opens it and returns a dict of the data. Any images
+		are automatically base64 decoded.
+		"""
 		try:
 			if self.use_compression:
 				with gzip.open(filename, 'r') as f:
@@ -74,8 +83,9 @@ class BagReader(Base):
 					tmp.append((img, datestamp))
 				data[key] = tmp
 
-		except:
+		except Exception as e:
 			print('Error reading file: {}'.format(filename))
+			print(e)
 			raise
 
 		return data
@@ -92,6 +102,12 @@ class BagWriter(Base):
 		pass
 
 	def stringify(self, keys):
+		"""
+		Images need to be converted to base64 for saving.
+
+		keys: key name or array of key names
+		return: None
+		"""
 		if type(keys) is list:
 			# print('list', keys)
 			for key in keys:
@@ -103,6 +119,14 @@ class BagWriter(Base):
 			raise Exception('Bag::stringify, invalid input: {}'.format(keys))
 
 	def push(self, key, data):
+		"""
+		Saves data with timestamp. If data is in b64keys (it is an image), then
+		it is base64 encoded before saved. All data is saved as: (data, timestamp)
+
+		key: dict key name, if not found, Exception is thrown
+		data: data to be saved
+		return: None
+		"""
 		if key in self.data:
 			# have to convert images (binary) to strings
 			if key in self.data['b64keys']:
@@ -114,17 +138,23 @@ class BagWriter(Base):
 			raise Exception('Bag::push, Invalid key: {}'.format(key))
 
 	def clear(self):
+		"""
+		Clears and resets everything.
+		"""
 		self.data = {}
 		self.data['b64keys'] = []
 
 	def open(self, topics):
+		"""
+		Set topic keys for writing
+		"""
 		self.clear()
 		for key in topics:
 			self.data[key] = []
 
 	def write(self, filename):
 		"""
-		Once you close a bag, it is written to disk and the data is cleared
+		Once you write a bag, it is written to disk and the data is cleared
 		"""
 		if self.data == {}:
 			return
@@ -132,13 +162,28 @@ class BagWriter(Base):
 		if self.use_compression:
 			with gzip.open(filename, 'wb') as f:
 				# json.dump(self.data, f)
-				s=json.dumps(self.data).encode('utf8')
+				s = json.dumps(self.data).encode('utf8')
 				f.write(s)
 		else:
 			with open(filename, 'wb') as f:
 				# json.dump(self.data, f)
-				s=json.dumps(self.data).encode('utf8')
+				s = json.dumps(self.data).encode('utf8')
 				f.write(s)
+
+		self.clear()
+
+	def size(self):
+		"""
+		Returns dict with the length of data for each key.
+
+		size() -> {'key 1': length, 'key 2': length, ...}
+		"""
+		ret = {}
+
+		for key in self.data.keys():
+			ret[key] = len(self.data[key])
+
+		return ret
 
 	# def reset(self):
 	# 	files = os.listdir('./')

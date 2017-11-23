@@ -2,6 +2,7 @@ from __future__ import print_function, division
 from the_collector import BagWriter, BagReader
 from the_collector import CircularBuffer
 import os
+import time
 import numpy as np
 
 
@@ -40,39 +41,56 @@ def rw(compress):
 	reader.use_compression = compress
 	data = reader.load(filename)
 
-	# for i in range(run_len):
-	# 	assert data['data'][i][0] == i, 'Data is different'
-	#
-	# 	f = data['camera'][i][0]
-	# 	print(f)
-	# 	# print('size', f.shape, image_size, i)
-	# 	assert f.shape == image_size, 'Image sizes are different'
-	# 	assert f.shape == save_img[i].shape, 'Image sizes are different 2'
-	# 	assert np.array_equal(save_img[i], f), 'Images are different'
-
 	for i, (d, ts) in enumerate(data['data']):
 		assert i == d, 'Data is different'
 
+	assert len(save_img) == len(data['camera']), 'Different data lengths'
+
+	for i, (f, ts) in enumerate(data['camera']):
+		# print(f)
+		# print(save_img[i])
+		assert f.shape == image_size, 'Image sizes are different'
+		assert f.shape == save_img[i].shape, 'Image sizes are different 2'
+
+		# images are jpeg compress, so they won't match
+		# assert np.array_equal(save_img[i], f), 'Images are different'
 
 	os.remove(filename)
+	time.sleep(1)
 
 
 def test_write_load():
-	# rw(True)
 	rw(False)
 
 
-# def test_circularBuff():
-# 	cb_len = 10
-# 	cb = CircularBuffer(cb_len)
-# 	assert len(cb._data) == cb_len
-#
-# 	# should push 0 - 99
-# 	for i in range(100):
-# 		cb.push(i)
-#
-# 	# buffer should only have 90-99 in it since it is only 10 in length
-# 	data = cb.get_all()
-#
-# 	for i, p in enumerate(range(90, 100)):
-# 		assert data[i] == p
+def test_write_load_compressed():
+	rw(True)
+
+
+def test_size():
+	bag = BagWriter()
+	bag.open(['data', 'camera'])
+
+	for i in range(10):
+		bag.push('data', i)
+
+	sz  = bag.size()
+
+	assert sz['data'] == 10, 'Data size is wrong'
+	assert sz['camera'] == 0, 'Camera size is wrong'
+
+
+def test_circularBuff():
+	cb_len = 10
+	cb = CircularBuffer(cb_len)
+	assert len(cb._data) == cb_len
+
+	# should push 0 - 99
+	for i in range(100):
+		cb.push(i)
+
+	# buffer should only have 90-99 in it since it is only 10 in length
+	data = cb.get_all()
+
+	for i, p in enumerate(range(90, 100)):
+		assert data[i] == p
