@@ -1,96 +1,57 @@
+# this can be run with:
+#
+# nosetests -vs test.py  note: this uses default python version
+# python2 `which nosetests` -vs test.py
+# python3 `which nosetests` -vs test.py
+
 from __future__ import print_function, division
-from the_collector import BagWriter, BagReader
-from the_collector import CircularBuffer
+from the_collector.bagit import BagWriter, BagReader
+from the_collector.circular_buffer import CircularBuffer
 import os
 import time
-import numpy as np
 
 
-def rw(compress):
-	run_len = 10
-	filename = 'test.json'
-	depth = 3
-	row = 400
-	col = 500
-	image_size = (row, col, depth)
+def test_rw():
+    filename = 'bob.bag'
 
-	bag = BagWriter()
-	bag.open(['data', 'camera'])
-	bag.stringify('camera')
-	bag.use_compression = compress
+    d = {'a': 1, 'b': 2}
+    data = []
+    bag = BagWriter()
 
-	save_img = []  # use this for comparing later
+    for _ in range(100):
+        d['stamp'] = time.time()
+        data.append(d)
 
-	for i in range(run_len):
-		bag.push('data', i)
+    for msg in data:
+        bag.push(msg)
 
-		# create image of random(0, 255) of size image_size
-		frame = np.random.randint(0, 255, image_size)
-		save_img.append(frame.copy())
+    bag.write(filename)  # .bag is automagically appended if not present
 
-		bag.push('camera', frame)
+    bag = BagReader()
+    data_in = bag.read(filename)
 
-	try:
-		bag.write(filename)
-	except:
-		assert False, 'Could not write bag file'
+    assert data == data_in
 
-	# data is a hash
-	# each key has an array: [data_point, time_stamp]
-	reader = BagReader()
-	reader.use_compression = compress
-	data = reader.load(filename)
+    # to see output: nosetests -vs test.py
+    print("{} is {:.1f} kB".format(filename, os.path.getsize(filename)/1000))
 
-	for i, (d, ts) in enumerate(data['data']):
-		assert i == d, 'Data is different'
-
-	assert len(save_img) == len(data['camera']), 'Different data lengths'
-
-	for i, (f, ts) in enumerate(data['camera']):
-		# print(f)
-		# print(save_img[i])
-		assert f.shape == image_size, 'Image sizes are different'
-		assert f.shape == save_img[i].shape, 'Image sizes are different 2'
-
-		# images are jpeg compress, so they won't match
-		# assert np.array_equal(save_img[i], f), 'Images are different'
-
-	os.remove(filename)
-	time.sleep(1)
-
-
-def test_write_load():
-	rw(False)
-
-
-def test_write_load_compressed():
-	rw(True)
-
-
-def test_size():
-	bag = BagWriter()
-	bag.open(['data', 'camera'])
-
-	for i in range(10):
-		bag.push('data', i)
-
-	sz  = bag.size()
-
-	assert sz['data'] == 10, 'Data size is wrong'
-	assert sz['camera'] == 0, 'Camera size is wrong'
+    # clean up and delete file
+    os.remove(filename)
 
 
 def test_circularBuff():
-	cb_len = 10
-	cb = CircularBuffer(cb_len)
-	assert len(cb._data) == cb_len
+    cb_len = 10
+    cb = CircularBuffer(cb_len)
+    assert len(cb._data) == cb_len
 
-	# should push 0 - 99
-	for i in range(100):
-		cb.push(i)
+    # should push 0 - 99
+    for i in range(100):
+        cb.push(i)
 
-	# buffer should only have 90-99 in it since it is only 10 in length
-	data = cb.get_all()
+    # buffer should only have 90-99 in it since it is only 10 in length
+    data = cb.get_all()
 
-	for i, p in enumerate(range(90, 100)):
-		assert data[i] == p
+    assert len(data) == 10
+
+    for i, p in enumerate(range(90, 100)):
+        assert data[i] == p
