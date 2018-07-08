@@ -13,24 +13,24 @@ import time
 
 def test_rw():
     filename = 'bob.bag'
-
+    save = {'a': []}
     d = {'a': 1, 'b': 2}
-    data = []
     bag = BagWriter()
 
-    for _ in range(100):
+    for i in range(100):
         d['stamp'] = time.time()
-        data.append(d)
-
-    for msg in data:
-        bag.push(msg)
+        bag.push('a', d)
+        save['a'].append(d)
 
     bag.write(filename)  # .bag is automagically appended if not present
 
     bag = BagReader()
-    data_in = bag.read(filename)
+    data = bag.read(filename)
 
-    assert data == data_in
+    # for key in datain.keys():
+    #     assert
+
+    assert save == data
 
     # to see output: nosetests -vs test.py
     print("{} is {:.1f} kB".format(filename, os.path.getsize(filename)/1000))

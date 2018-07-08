@@ -133,7 +133,7 @@ class BagWriter(object):
         """
         buffer_size: number of Bytes, default 10MB
         """
-        self.buffer = []
+        self.buffer = {}
         self.ext_pack = pack
         # self.fd = None
         # self.buffer_size = buffer_size
@@ -165,13 +165,16 @@ class BagWriter(object):
     #     self.write()
     #     # self.fd.close()
 
-    def push(self, msg):
+    def push(self, key, msg):
         """
         Push another message to the buffer and grab time stamp for play back.
         Buffer is serialized, easier to track memory consumption because it is
         all turned into bytes.
         """
-        self.buffer.append(msg)
+        if key not in self.buffer:
+            self.buffer[key] = []
+
+        self.buffer[key].append(msg)
 
         # if len(self.buffer) >= self.buffer_size:
         #     print('- bag wrote:', len(self.buffer))
@@ -195,7 +198,7 @@ class BagWriter(object):
                 msgpack.pack(self.buffer, outfile, strict_types=True, use_bin_type=True)
             # outfile.write(m)
 
-        self.buffer = []
+        self.buffer = {}
 
 
 # class Record(object):

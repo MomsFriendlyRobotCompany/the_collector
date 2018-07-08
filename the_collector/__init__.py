@@ -4,4 +4,4 @@ from the_collector.circular_buffer import CircularBuffer
 
 __license__ = "MIT"
 __author__ = "Kevin J. Walchko"
-__version__ = '0.5.0'
+__version__ = '0.5.1'
