@@ -1,4 +1,4 @@
-[![image](https://raw.githubusercontent.com/MomsFriendlyRobotCompany/the-collector/master/pics/header.jpg%0A%C2%A0%20%C2%A0:align:%20center)](https://github.com/MomsFriendlyRobotCompany/the-collector)
+[![image](https://raw.githubusercontent.com/MomsFriendlyRobotCompany/the-collector/master/pics/header.jpg)](https://github.com/MomsFriendlyRobotCompany/the-collector)
 
 # The Collector
 
@@ -14,7 +14,7 @@ data when it is captured. The main structure is a dict which has keys
 for each data series stored.
 
 This was written for a class I taught on robotics. It is meant to be simple and
-maintainable.
+teach the students some things.
 
 ## Setup
 
@@ -24,9 +24,13 @@ The suggested way to install this is via the `pip` command as follows:
 
     pip install the_collector
 
-If you want to do something with `numpy`, then use:
+If you want to do something with `numpy` or `simplejson`, then use:
 
     pip install the_collector[numpy]
+    pip install the_collector[simplejson]
+    pip install the_collector[all]
+
+The `all` option installs all optional libraries.
 
 ### Development
 
@@ -34,8 +38,68 @@ To submit git pulls, clone the repository and set it up as follows:
 
     git clone https://github.com/MomsFriendlyRobotCompany/the-collector
     cd the-collector
-    pip install -r requirements
     pip install -e .
+
+# New `msgpack` Version
+
+- You get out exactly what you put it
+    - no default timestamp applied to data
+- because `msgpack` does a great job of turning python data into efficient binary data, there is no need for an extra compression step
+- OpenCV is **not** required
+- `numpy` is optional, but if you need it, then a simple `pip` command will install it (unlike opencv)
+
+```python
+from __future__ import print_function
+from the_collector.bagit import BagReader, BagWriter
+
+
+d = {'a': 1, 'b': 2}
+bag = BagWriter()
+
+# grab some data
+for _ in range(100):
+    bag.push(d)
+
+# save it to a file
+bag.write('bob.bag')  # .bag is automagically appended if not present
+
+# now read it back
+bag = BagReader()
+data = bag.read('bob.bag')
+```
+
+## Custom Pack/Unpack
+
+You can pass functions to `pack` or `unpack` custom data structures to 
+`BagReader(pack=...)` and `BagWriter(unpack=...)` as expained in the `msgpack`
+docs [here](https://github.com/msgpack/msgpack-python#packingunpacking-of-custom-data-type)
+
+```python
+def ext_unpack(msg):
+    # do some cool stuff here
+    # see msgpack docs for examples
+
+# calls the function ext_unpack when something custom is encountered
+bag = BagReader(unpack=ext_unpack)
+```
+
+```python
+def ext_pack(msg):
+    # do some cool stuff here
+    # see msgpack docs for examples
+
+# calls the function ext_unpack when something custom is encountered
+bag = BagWriter(pack=ext_pack)
+```
+
+## Todo
+
+- I might add back in optional timestamping of data
+- I would like to figure out a way to stream data to disk so you don't have to hold everything in memory first
+
+# Old Json Version
+
+The old version always returned a `dict` and always appended a timestamp.
 
 ## Usage
 
@@ -59,7 +123,7 @@ and imu is an array of \[accel, gyro, magnetometer\] data. Now to save
 data to disk:
 
 ```python
-from the_collector.bagit import BagWriter
+from the_collector.bagit import BagJsonWriter
 import time
 
 # this file name gives a time/date when it was created
@@ -67,7 +131,7 @@ import time
 filename = 'robot-{}.json'.format(time.ctime().replace(' ', '-'))
 
 # create the writer
-bag = BagWriter()
+bag = BagJsonWriter()
 bag.open(filename, ['imu', 'camera'])
 
 # camera images are binary arrays, we are going to base64 encode them
@@ -89,10 +153,10 @@ except KeyboardError:
 
 To read data from a bag file:
 
-``` {.sourceCode .python}
-from the_collector.bagit import BagReader
+``` python
+from the_collector.bagit import BagJsonReader
 
-reader = BagReader()
+reader = BagJsonReader()
 data = reader.load('my_file.json')  # read in the file and conver to dict
 
 # now print everything out
@@ -110,17 +174,14 @@ You can turn on or off compress to reduce file size. If you use the
 compression, then it really **isn\'t a json file anymore**. Thus, other
 programs won\'t be able to read it.
 
-``` {.sourceCode .python}
-bag = BagWriter()           # or BagReader()
+``` python
+bag = BagJsonWriter()           # or BagReader()
 bag.use_compression = True  # or False (default)
 ```
 
-## Examples
-
-See `examples` folder examples how to capture images and record them.
-
 # Change Log
 
+| Date | Version | Notes |
 ------------|--------|----------------------------------
 2018-07-09  | 0.5.0  |  moved away from json and now using msgpack
 2017-11-23  | 0.4.0  |  fixes, documentation, unit tests
