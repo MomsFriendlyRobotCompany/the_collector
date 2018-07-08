@@ -51,7 +51,7 @@ setup(
     extras_require={
         'numpy': ["numpy"],
         'simplejson': ["simplejson"],
-        'all': ["numpy, simplejson"]
+        'all': ["numpy", "simplejson"]
     },
     cmdclass={
         'publish': PublishCommand,
