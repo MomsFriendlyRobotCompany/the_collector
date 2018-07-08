@@ -56,7 +56,7 @@ setup(
     cmdclass={
         'publish': PublishCommand,
         'make': BuildCommand,
-        'tag': SetGitTag
+        'git': SetGitTag
     },
     # scripts=[
     #     'bin/set_id.py',
