@@ -26,7 +26,7 @@ setup(
     author_email='walchko@users.noreply.github.com',
     name=PACKAGE_NAME,
     version=VERSION,
-    description='A library to store robot data in a json file',
+    description='A library to store robot data in a msgpack format',
     long_description=open('readme.md').read(),
     long_description_content_type='text/markdown',
     url='http://github.com/MomsFriendlyRobotCompany/{}'.format(PACKAGE_NAME),
@@ -42,7 +42,7 @@ setup(
         'Topic :: Software Development :: Libraries :: Application Frameworks'
     ],
     license='MIT',
-    keywords=['library', 'robotics', 'robot'],
+    keywords=['library', 'robotics', 'robot', 'msgpack', 'storage'],
     packages=[PACKAGE_NAME],
     install_requires=[
         'build_utils',
@@ -50,21 +50,12 @@ setup(
     ],
     extras_require={
         'numpy': ["numpy"],
-        'simplejson': ["simplejson"],
-        'all': ["numpy", "simplejson"]
+        # 'simplejson': ["simplejson"],
+        # 'all': ["numpy", "simplejson"]
     },
     cmdclass={
         'publish': PublishCommand,
         'make': BuildCommand,
         'git': SetGitTag
     },
-    # scripts=[
-    #     'bin/set_id.py',
-    #     'bin/servo_ping.py',
-    #     'bin/set_angle.py',
-    #     'bin/set_baud_rate.py',
-    #     'bin/servo_reboot.py',
-    #     'bin/servo_reset.py',
-    #     'bin/get_angle.py'
-    # ]
 )

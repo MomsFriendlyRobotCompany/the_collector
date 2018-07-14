@@ -1,13 +1,39 @@
-#!/usr/bin/env python
-
+##############################################
+# The MIT License (MIT)
+# Copyright (c) 2017 Kevin Walchko
+# see LICENSE for full details
+##############################################
 from __future__ import print_function, division
-# import cv2
 import time
 # import numpy as np
 # import os
 # import simplejson as json
 # import base64
 import gzip  # compression
+
+
+"""
+OLD WAY ... ignore
+
+encode:
+img_str = cv2.imencode('.jpg', img)[1].tostring()
+
+decode:
+nparr = np.fromstring(STRING_FROM_DATABASE, np.uint8)
+img = cv2.imdecode(nparr, cv2.CV_LOAD_IMAGE_COLOR)
+
+unicode errors with above
+
+jpeg = = cv2.imencode('.jpg', img)[1]
+img_str = base64.b64encode(jpeg)
+
+now to reverse:
+
+ii = base64.b64decode(img_str)
+ii = np.fromstring(ii, dtype=np.uint8)
+ii = cv2.imdecode(ii, self.depth)
+
+"""
 
 
 class BagJsonError(Exception):

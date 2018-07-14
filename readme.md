@@ -14,7 +14,8 @@ data when it is captured. The main structure is a dict which has keys
 for each data series stored.
 
 This was written for a class I taught on robotics. It is meant to be simple and
-teach the students some things.
+teach the students some things. There are probably better solutions out there,
+but I like this. :smirk:
 
 ## Setup
 
@@ -23,14 +24,11 @@ teach the students some things.
 The suggested way to install this is via the `pip` command as follows:
 
     pip install the_collector
-
-If you want to do something with `numpy` or `simplejson`, then use:
-
     pip install the_collector[numpy]
-    pip install the_collector[simplejson]
-    pip install the_collector[all]
 
-The `all` option installs all optional libraries.
+If you install `numpy`, then you get access to working with numpy arrays
+using the functions: `array_pack()` and `array_pack()`. These really don't
+save you much.
 
 ### Development
 
@@ -40,37 +38,40 @@ To submit git pulls, clone the repository and set it up as follows:
     cd the-collector
     pip install -e .
 
-# New `msgpack` Version
+# Usage
 
-- You get out exactly what you put it
-    - no default timestamp applied to data
-- because `msgpack` does a great job of turning python data into efficient binary data, there is no need for an extra compression step
-- OpenCV is **not** required
-- `numpy` is optional, but if you need it, then a simple `pip` command will install it (unlike opencv)
+Bag stores data in memory until the buffer size limit is reached then it dumps
+the data to a file.
 
 ```python
 from __future__ import print_function
-from the_collector.bagit import BagReader, BagWriter
+from the_collector import BagReader, BagWriter
 
 
 d = {'a': 1, 'b': 2}
-bag = BagWriter()
+# bag = BagWriter('bob.bag', buffer_size=1000)  # you can change buffer size
+bag = BagWriter('bob.bag') # .bag is automagically appended if not present
 
 # grab some data
 for _ in range(100):
-    bag.push(d)
+    bag.push('temperature', d)    # the key name can be anything
+    bag.push('something else', d) # when you use BagReader, these become dict keys
 
-# save it to a file
-bag.write('bob.bag')  # .bag is automagically appended if not present
+# flushes any remaining data to the file and closes the file
+bag.close()
 
 # now read it back
 bag = BagReader()
 data = bag.read('bob.bag')
 ```
 
+If you want to record a time stamp for each data collect (using python's
+  `time.time()`), just do a `bag.push_stamp()`. However, when you read back
+  the data, it will now be (data, time_stamp).
+
 ## Custom Pack/Unpack
 
-You can pass functions to `pack` or `unpack` custom data structures to 
+You can pass functions to `pack` or `unpack` custom data structures to
 `BagReader(pack=...)` and `BagWriter(unpack=...)` as expained in the `msgpack`
 docs [here](https://github.com/msgpack/msgpack-python#packingunpacking-of-custom-data-type)
 
@@ -89,101 +90,33 @@ def ext_pack(msg):
     # see msgpack docs for examples
 
 # calls the function ext_unpack when something custom is encountered
-bag = BagWriter(pack=ext_pack)
+bag = BagWriter('bob.bag', pack=ext_pack)
 ```
 
 ## Todo
 
-- I might add back in optional timestamping of data
-- I would like to figure out a way to stream data to disk so you don't have to hold everything in memory first
+- Maybe allow `BagReader` and `BagWriter` to accept a file-like object (io.BytesIO)
+  but I am not sure of the value for this. It would be nice for testing, so I
+  don't have to always use `os.remove()` to clean up bag files. What is a use
+  case?
 
-# Old Json Version
+# History
 
-The old version always returned a `dict` and always appended a timestamp.
-
-## Usage
-
-In the code example below, sensor data is saved to a file. Specifically,
-it is saving:
-
--   imu: accel, gyro, magnetometer
--   camera: raspberry pi images.
-
-Every time data is pushed into the Bag file, each data point is given a
-time stamp. Thus, for the camera, the Bag (which is a dictionary) would
-have an array of:
-
-```python
-bag['camera'] = [[frame0, stamp], [frame1, stamp], ... ]
-bag['imu'] = [[imu0, stamp], [imu1, stamp], ... ]
-```
-
-where `stamp` is a time stamp, `frame` is an image from from a camera,
-and imu is an array of \[accel, gyro, magnetometer\] data. Now to save
-data to disk:
-
-```python
-from the_collector.bagit import BagJsonWriter
-import time
-
-# this file name gives a time/date when it was created
-# you don't have to do this, 'data.json' would work fine too
-filename = 'robot-{}.json'.format(time.ctime().replace(' ', '-'))
-
-# create the writer
-bag = BagJsonWriter()
-bag.open(filename, ['imu', 'camera'])
-
-# camera images are binary arrays, we are going to base64 encode them
-# so we can store them in a json file nicely
-bag.stringify('camera')  # this can be a string or an array of keys
-
-try:
-    while True:
-        # read and get imu data, say: data = imu.read()
-        # always push (key, data), push will add a timestamp
-        bag.push('imu', data)
-
-        # read camera, say: ret, frame = camera.read()
-        bag.push('camera', frame)
-
-except KeyboardError:
-    bag.write()  # actually writes the data to disk
-```
-
-To read data from a bag file:
-
-``` python
-from the_collector.bagit import BagJsonReader
-
-reader = BagJsonReader()
-data = reader.load('my_file.json')  # read in the file and conver to dict
-
-# now print everything out
-for key, value in data.items():
-    print('-- {} -----------------'.format(key))
-    for sample in value:
-        point, timestamp = sample
-        print(timestamp, point)
-    print('')
-```
-
-### Compression
-
-You can turn on or off compress to reduce file size. If you use the
-compression, then it really **isn\'t a json file anymore**. Thus, other
-programs won\'t be able to read it.
-
-``` python
-bag = BagJsonWriter()           # or BagReader()
-bag.use_compression = True  # or False (default)
-```
+- Originally started with storing the file as a json file
+- Added compression to reduce the size, this proved to be superior to python's
+  pickle library
+- Looked at Google's protobufs, they seemed complex and the message types didn't
+  really have what I wanted
+- `msgpack` seems to be fast and compact, tried using compression (gzip library)
+  on msgpack data, but it actually made it worse. Decided to go with this and
+  it saves me a compression step
 
 # Change Log
 
 | Date | Version | Notes |
 ------------|--------|----------------------------------
-2018-07-09  | 0.5.0  |  moved away from json and now using msgpack
+2018-07-14  | 0.6.0  |  changed interface to support buffered writing to disk
+2018-07-09  | 0.5.0  |  moved away from `json` and now using `msgpack`
 2017-11-23  | 0.4.0  |  fixes, documentation, unit tests
 2017-10-04  | 0.0.1  |  init
 
