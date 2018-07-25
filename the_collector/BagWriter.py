@@ -55,7 +55,7 @@ class BagWriter(object):
         self.filename = filename
 
         if pack:
-            print('pack', pack)
+            # print('pack', pack)
 
             # must have strict_types for namedtuple to work!!!!!!
             self.packer = msgpack.Packer(default=pack, use_bin_type=True, strict_types=True)

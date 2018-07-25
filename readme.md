@@ -69,6 +69,58 @@ If you want to record a time stamp for each data collect (using python's
   `time.time()`), just do a `bag.push_stamp()`. However, when you read back
   the data, it will now be (data, time_stamp).
 
+## Messages
+
+Use the built-in message types:
+
+```python
+# from the_collector.messages import serialize, deserialize
+from the_collector.messages import Pose, Vector, Quaternion, IMU, Image
+from the_collector.messages import Messages
+
+# this holds encode/decode for messages
+messages = Messages()
+bag = BagWriter(filename, buffer_size=10, pack=messages.serialize)
+
+for i in range(20):
+    d = Pose(Vector(1, 1, 1), Quaternion(1, 1, 1, 1))
+    bag.push('test', d)
+
+
+...
+
+bag = BagReader(unpack=messages.deserialize)
+load = bag.read(filename)
+```
+
+Create and add new ones:
+
+```python
+# from the_collector.messages import serialize, deserialize
+from the_collector.messages import Pose, Vector, Quaternion, IMU, Image
+from the_collector.messages import Messages
+
+# this is a simple message, only python types in it
+Test = namedtuple('Test', 'a b c')
+# this is a complex message, has other messages
+Test2 = namedtuple('Test2', 'a b')
+
+class myMessages(Messages):
+    """
+    How to add new messages?
+    """
+    def __init__(self):
+        Messages.__init__(self, sm={'Test': Test}, cm={'Test2': Test2})
+
+msgs = myMessages()
+bag = BagWriter(filename, pack=msgs.serialize)
+
+...
+
+bag = BagReader(unpack=msgs.deserialize)
+load = bag.read(filename)
+```
+
 ## Custom Pack/Unpack
 
 You can pass functions to `pack` or `unpack` custom data structures to
@@ -113,8 +165,9 @@ bag = BagWriter('bob.bag', pack=ext_pack)
 
 # Change Log
 
-| Date | Version | Notes |
+Date        | Version| Notes
 ------------|--------|----------------------------------
+2018-07-25  | 0.7.0  |  added messages and a way to do custom messages
 2018-07-14  | 0.6.0  |  changed interface to support buffered writing to disk
 2018-07-09  | 0.5.0  |  moved away from `json` and now using `msgpack`
 2017-11-23  | 0.4.0  |  fixes, documentation, unit tests

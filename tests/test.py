@@ -13,8 +13,12 @@ import os
 import time
 from io import BytesIO
 
-from the_collector.messages import serialize, deserialize
+# from the_collector.messages import serialize, deserialize
 from the_collector.messages import Pose, Vector, Quaternion, IMU, Image
+from the_collector.messages import Messages
+
+# this holds encode/decode for messages
+messages = Messages()
 
 
 def rw(buffer_size, ts_stamp=False):
@@ -85,7 +89,7 @@ def test_messages():
         'test': [],
         'bob': []
     }
-    bag = BagWriter(filename, buffer_size=10, pack=serialize)
+    bag = BagWriter(filename, buffer_size=10, pack=messages.serialize)
 
     for i in range(20):
         d = Pose(Vector(1, 1, 1), Quaternion(1, 1, 1, 1))
@@ -99,7 +103,58 @@ def test_messages():
 
     bag.close()
 
-    bag = BagReader(unpack=deserialize)
+    bag = BagReader(unpack=messages.deserialize)
+    load = bag.read(filename)
+    assert save == load
+    # print("*"*40)
+    # print('\nAre they the same?', save == load, '\n')
+    # print("*"*40)
+    #
+    # print('-'*40)
+    # print(save)
+    # print('-'*40)
+    # print(load)
+    # clean up and delete file
+    os.remove(filename)
+
+
+def test_new_messages():
+    filename = 's.bag'
+    save = {
+        'test': [],
+        'bob': []
+    }
+
+    # this is a simple message, only python types in it
+    Test = namedtuple('Test', 'a b c')
+    # this is a complex message, has other messages
+    Test2 = namedtuple('Test2', 'a b')
+
+    class myMessages(Messages):
+        """
+        How to add new messages?
+        """
+        def __init__(self):
+            Messages.__init__(self, sm={'Test': Test}, cm={'Test2': Test2})
+
+    msgs = myMessages()
+    bag = BagWriter(filename, buffer_size=10, pack=msgs.serialize)
+
+    for i in range(20):
+        d = Test(i, 2*i, 3*i)
+        k = Test2(Vector(i,i,i), Vector(2*i, 2*i, 2*i))
+
+        bag.push('bob', d)
+        save['bob'].append(d)
+
+        bag.push('test', k)
+        bag.push('test', i)
+        save['test'].append(k)
+        save['test'].append(i)
+
+    bag.close()
+
+    bag = BagReader(unpack=msgs.deserialize)
     load = bag.read(filename)
     assert save == load
     # print("*"*40)
@@ -130,3 +185,10 @@ def test_circularBuff():
 
     for i, p in enumerate(range(90, 100)):
         assert data[i] == p
+
+
+try:
+    import pygecko
+
+except ImportError:
+    pass

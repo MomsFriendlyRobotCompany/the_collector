@@ -36,7 +36,7 @@ class BagReader(object):
         fd = open(filename, 'rb')
 
         if self.ext_unpack:
-            print('unpacker')
+            # print('unpacker')
             unpacker = msgpack.Unpacker(fd, ext_hook=self.ext_unpack, raw=False)
         else:
             unpacker = msgpack.Unpacker(fd, raw=False)

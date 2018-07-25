@@ -7,4 +7,4 @@ from the_collector.utils import file_size, rm
 
 __license__ = "MIT"
 __author__ = "Kevin J. Walchko"
-__version__ = '0.6.1'
+__version__ = '0.7.0'
