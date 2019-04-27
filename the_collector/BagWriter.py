@@ -5,9 +5,22 @@
 ##############################################
 from __future__ import print_function, division
 import time
-# import os
-import msgpack
+import datetime
+import pickle
 
+# try:
+#     import simplejson as json
+# except ImportError:
+#     import json
+#
+# try:
+#     import msgpack
+# except ImportError:
+#     class msgpack(object):
+#         def __init__(self):
+#             raise Exception("WARNING: msgpack not found")
+#         def pack(self, data): return None
+#         def unpack(self): return None
 
 """
 msgpack-numpy does some stuff, take a look at how it does it
@@ -125,3 +138,49 @@ class BagWriter(object):
 
         # reset buffer to empty
         self.buffer = []
+
+
+
+# from the_collector.protocols import Json, MsgPack, Pickle
+
+class BagWriter2(object):
+    """
+    """
+
+    def __init__(self, packer):
+        """
+        filename: either a string containing the desired file name (note that
+          .bag is appended) OR a file-like object from io.Bytes or something
+        buffer_size: number of Bytes, default 10MB
+        """
+        self.buffer = {}
+        self.packer = packer()
+        print(">> ", packer.proto)
+
+    def __del__(self):
+        self.write()  # this kills me on BytesIO, it closes the buffer
+
+    def push(self, key, msg):
+        """
+        Push another message and a key into the buffer. Once the buffer limit
+        is reached it is written to a file.
+        """
+        if key not in self.buffer.keys():
+            self.buffer[key] = []
+
+        self.buffer[key].append(msg)
+
+    def write(self, filename='data', timestamp=True):
+        if timestamp:
+            dt = str(datetime.datetime.now()).replace(' ', '-')
+            filename = "{}.{}.{}.bag".format(filename, dt, self.packer.proto)
+        else:
+            filename = "{}.{}.bag".format(filename, self.packer.proto)
+
+        with open(filename, 'wb') as fd:
+            d = self.packer.pack(self.buffer)
+            fd.write(d)
+
+        self.buffer = {}
+
+        return filename
