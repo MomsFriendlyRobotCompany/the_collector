@@ -35,8 +35,8 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Software Development :: Libraries',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Software Development :: Libraries :: Application Frameworks'
@@ -46,7 +46,8 @@ setup(
     packages=[PACKAGE_NAME],
     install_requires=[
         'build_utils',
-        'msgpack'
+        'msgpack',
+        'simplejson'
     ],
     extras_require={
         'numpy': ["numpy"],
