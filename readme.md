@@ -41,6 +41,8 @@ save you much.
 
 # Usage
 
+## BagIt
+
 Bag stores data in memory until the buffer size limit is reached then it dumps
 the data to a file.
 
@@ -86,6 +88,23 @@ for key, val in data.items():
     for v in val:
         print("{}".format(v), end=' ')
         print(' ')
+```
+
+## Circular Buffer
+
+```python
+from the_collector import CircularBuffer
+
+cb = CircularBuffer(60)  # can only hold 60 items before it copies over data
+
+# Let's push way more than 60 things
+for i in range(200):
+    cb.push(i)
+
+print(cb.get_all())  # print everything
+print('get cb[7]', cb[7])
+print('get cb[0]', cb[0])
+print('get last', cb.get_last())
 ```
 
 # Todo

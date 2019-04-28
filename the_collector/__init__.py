@@ -9,4 +9,4 @@ from the_collector.protocols import Json, MsgPack, Pickle
 
 __license__ = "MIT"
 __author__ = "Kevin J. Walchko"
-__version__ = '0.7.0'
+__version__ = '0.8.0'
