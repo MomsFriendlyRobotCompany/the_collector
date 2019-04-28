@@ -61,7 +61,7 @@ python:
 
 # install other libraries using pip
 install:
-    - pip install -U pip setuptools wheel nose build_utils msgpack simpmlejson
+    - pip install -U pip setuptools wheel nose build_utils msgpack simplejson
     # - pip install -U -r requirements.txt
     # - pip install -U opencv-contrib-python
     - pip install .
