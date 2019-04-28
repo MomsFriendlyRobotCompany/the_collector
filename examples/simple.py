@@ -7,9 +7,9 @@ import json
 
 d = {'a': 1, 'b': 2}
 
-# bag = BagIt(Json)
+bag = BagIt(Json)
 # bag = BagIt(Pickle)
-bag = BagIt(MsgPack)
+# bag = BagIt(MsgPack)
 
 for i in range(10):
     bag.push('test', d)

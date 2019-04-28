@@ -26,8 +26,13 @@ class BagIt(object):
         pass
 
     def fill(self, data):
+        """
+        Clears buffer and fills it data (dictionary)
+        """
         self.buffer = {}
+        print(".fill() ----------------------------")
         for key, val in data.items():
+            print("- {}: {}".format(key, len(val)))
             for v in val:
                 self.push(key, v)
 

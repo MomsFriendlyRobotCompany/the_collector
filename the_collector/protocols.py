@@ -46,9 +46,6 @@ class Json(object):
         return json.dumps(data).encode("utf-8")
 
     def unpack(self, filename):
-        # print(data.decode("utf-8", "strict"))
-        # return json.loads(data.decode("utf-8"))
-        # return {}
         with open(filename, 'rb') as fd:
             data = json.load(fd)
         return data
