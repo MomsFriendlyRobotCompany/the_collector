@@ -5,7 +5,7 @@ sudo: false
 
 python:
     - "3.6"
-    - "2.7"
+    - "3.7"
 
 # command to install dependencies that require sudo
 # https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
@@ -61,10 +61,10 @@ python:
 
 # install other libraries using pip
 install:
-    - pip install -U pip setuptools wheel nose
+    - pip3 install -U pip setuptools wheel nose build_utils msgpack simpmlejson
     # - pip install -U -r requirements.txt
     # - pip install -U opencv-contrib-python
-    - pip install .
+    - pip3 install .
 
 # command to run tests
 script: nosetests -v -w tests test.py

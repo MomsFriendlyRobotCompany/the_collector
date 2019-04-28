@@ -18,6 +18,7 @@ PACKAGE_NAME = 'the_collector'
 BuildCommand.pkg = PACKAGE_NAME
 PublishCommand.pkg = PACKAGE_NAME
 PublishCommand.version = VERSION
+BuildCommand.py2 = False
 SetGitTag.version = VERSION
 
 
