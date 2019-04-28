@@ -17,6 +17,15 @@ This was written for a class I taught on robotics. It is meant to be simple and
 teach the students some things. There are probably better solutions out there,
 but I like this. :smirk:
 
+Additionally, there is nothing magically about what this does:
+
+- It provides a generic interface to using `pickle`, `json`, or `msgpack` as
+the protocol for saving data to disk
+- It also allows you to convert between them if needed
+- Bag files can be read using the original protocol, thus data is never lost
+if this library goes away
+- Designed to be simple and straight forward
+
 ## Setup
 
 ### Install
@@ -30,148 +39,70 @@ If you install `numpy`, then you get access to working with numpy arrays
 using the functions: `array_pack()` and `array_pack()`. These really don't
 save you much.
 
-### Development
-
-To submit git pulls, clone the repository and set it up as follows:
-
-    git clone https://github.com/MomsFriendlyRobotCompany/the-collector
-    cd the-collector
-    pip install -e .
-
 # Usage
 
 Bag stores data in memory until the buffer size limit is reached then it dumps
 the data to a file.
 
 ```python
+#!/usr/bin/env python3
 from __future__ import print_function
-from the_collector import BagReader, BagWriter
+from the_collector import BagIt
+from the_collector import Json, MsgPack, Pickle
+import json
 
 
 d = {'a': 1, 'b': 2}
-# bag = BagWriter('bob.bag', buffer_size=1000)  # you can change buffer size
-bag = BagWriter('bob.bag') # .bag is automagically appended if not present
 
-# grab some data
-for _ in range(100):
-    bag.push('temperature', d)    # the key name can be anything
-    bag.push('something else', d) # when you use BagReader, these become dict keys
+bag = BagIt(Json)
+# bag = BagIt(Pickle)
+# bag = BagIt(MsgPack)
 
-# flushes any remaining data to the file and closes the file
-bag.close()
-
-# now read it back
-bag = BagReader()
-data = bag.read('bob.bag')
-```
-
-If you want to record a time stamp for each data collect (using python's
-  `time.time()`), just do a `bag.push_stamp()`. However, when you read back
-  the data, it will now be (data, time_stamp).
-
-## Messages
-
-Use the built-in message types:
-
-```python
-# from the_collector.messages import serialize, deserialize
-from the_collector.messages import Pose, Vector, Quaternion, IMU, Image
-from the_collector.messages import Messages
-
-# this holds encode/decode for messages
-messages = Messages()
-bag = BagWriter(filename, buffer_size=10, pack=messages.serialize)
-
-for i in range(20):
-    d = Pose(Vector(1, 1, 1), Quaternion(1, 1, 1, 1))
+for i in range(10):
     bag.push('test', d)
+    bag.push('bob', d)
+    bag.push('tom', ('a', i,))
 
+# timestamp adds a timestamp automatically to the bag file. Thus, you won't
+# over write bob.json.bag each time you run this program because the filename
+# is bob-2019-04-20-15:35:25.6543.json.bag
+fname = bag.write('bob', timestamp=False)
 
-...
+print(">> created:", fname)
 
-bag = BagReader(unpack=messages.deserialize)
-load = bag.read(filename)
+data = bag.read(fname)
+print(data)
 ```
 
-Create and add new ones:
+Now, since there is nothing super special `the_collector` does with packing
+data, you can always read the bag files using the original libraries:
 
 ```python
-# from the_collector.messages import serialize, deserialize
-from the_collector.messages import Pose, Vector, Quaternion, IMU, Image
-from the_collector.messages import Messages
+with open(fname, 'rb') as fd:
+    data = json.load(fd)
 
-# this is a simple message, only python types in it
-Test = namedtuple('Test', 'a b c')
-# this is a complex message, has other messages
-Test2 = namedtuple('Test2', 'a b')
-
-class myMessages(Messages):
-    """
-    How to add new messages?
-    """
-    def __init__(self):
-        Messages.__init__(self, sm={'Test': Test}, cm={'Test2': Test2})
-
-msgs = myMessages()
-bag = BagWriter(filename, pack=msgs.serialize)
-
-...
-
-bag = BagReader(unpack=msgs.deserialize)
-load = bag.read(filename)
+for key, val in data.items():
+    print("{}[{}]".format(key, len(val)))
+    for v in val:
+        print("{}".format(v), end=' ')
+        print(' ')
 ```
 
-## Custom Pack/Unpack
+# Todo
 
-You can pass functions to `pack` or `unpack` custom data structures to
-`BagReader(pack=...)` and `BagWriter(unpack=...)` as expained in the `msgpack`
-docs [here](https://github.com/msgpack/msgpack-python#packingunpacking-of-custom-data-type)
-
-```python
-def ext_unpack(msg):
-    # do some cool stuff here
-    # see msgpack docs for examples
-
-# calls the function ext_unpack when something custom is encountered
-bag = BagReader(unpack=ext_unpack)
-```
-
-```python
-def ext_pack(msg):
-    # do some cool stuff here
-    # see msgpack docs for examples
-
-# calls the function ext_unpack when something custom is encountered
-bag = BagWriter('bob.bag', pack=ext_pack)
-```
-
-## Todo
-
-- Maybe allow `BagReader` and `BagWriter` to accept a file-like object (io.BytesIO)
-  but I am not sure of the value for this. It would be nice for testing, so I
-  don't have to always use `os.remove()` to clean up bag files. What is a use
-  case?
-
-# History
-
-- Originally started with storing the file as a json file
-- Added compression to reduce the size, this proved to be superior to python's
-  pickle library
-- Looked at Google's protobufs, they seemed complex and the message types didn't
-  really have what I wanted
-- `msgpack` seems to be fast and compact, tried using compression (gzip library)
-  on msgpack data, but it actually made it worse. Decided to go with this and
-  it saves me a compression step
+- look at enabling `BytesIO` for testing/working so you don't litter filing system
+with test bag files
 
 # Change Log
 
 Date        | Version| Notes
 ------------|--------|----------------------------------
-2018-07-25  | 0.7.0  |  added messages and a way to do custom messages
-2018-07-14  | 0.6.0  |  changed interface to support buffered writing to disk
-2018-07-09  | 0.5.0  |  moved away from `json` and now using `msgpack`
-2017-11-23  | 0.4.0  |  fixes, documentation, unit tests
-2017-10-04  | 0.0.1  |  init
+2019-04-28  | 0.8.0  | can store data using `json`, `pickle`, or `msgpack`
+2018-07-25  | 0.7.0  | added `msgpack` messages and a way to do custom messages
+2018-07-14  | 0.6.0  | changed interface to support buffered writing to disk
+2018-07-09  | 0.5.0  | moved away from `json` and now using `msgpack`
+2017-11-23  | 0.4.0  | fixes, documentation, unit tests
+2017-10-04  | 0.0.1  | init
 
 # The MIT License (MIT)
 
