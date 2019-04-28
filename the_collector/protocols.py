@@ -36,7 +36,8 @@ class Pickle(object):
 
 
 class Json(object):
-    def __init__(self, compress=False):
+    def __init__(self, compress=False, use_tuples=True):
+        self.use_tuples = use_tuples
         if compress:
             self.proto = "json-gz"
         else:
@@ -48,6 +49,12 @@ class Json(object):
     def unpack(self, filename):
         with open(filename, 'rb') as fd:
             data = json.load(fd)
+
+        if self.use_tuples:
+            for key, val in data.items():
+                if isinstance(val[0], list):
+                    for i in range(len(val)):
+                        data[key][i] = tuple(data[key][i])
         return data
 
     def packs(self, s):
@@ -84,6 +91,11 @@ try:
             with open(filename, 'rb') as fd:
                 # data = json.load(fd)
                 data = msgpack.unpack(fd, use_list=False, raw=False)
+
+            # The original arrays were turned into tuples
+            for key, val in data.items():
+                data[key] = list(data[key])
+
             return data
 
 except ImportError:
