@@ -7,3 +7,5 @@ dist
 test*.json
 .eggs
 .ipynb_checkpoints/
+*.bag
+archive

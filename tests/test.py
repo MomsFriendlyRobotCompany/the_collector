@@ -1,173 +1,136 @@
-# this can be run with:
-#
-# nosetests -vs test.py  note: this uses default python version
-# python2 `which nosetests` -vs test.py
-# python3 `which nosetests` -vs test.py
-
-from __future__ import print_function, division
-from the_collector import BagWriter, BagReader
+#!/usr/bin/env python
 from the_collector import CircularBuffer
 from collections import namedtuple
-import msgpack
+# import msgpack
 import os
-import time
-from io import BytesIO
-
-# from the_collector.messages import serialize, deserialize
-from the_collector.messages import Pose, Vector, Quaternion, IMU, Image
-from the_collector.messages import Messages
-
-# this holds encode/decode for messages
-messages = Messages()
+# import time
+# from io import BytesIO
+from the_collector import BagIt
+from the_collector import Json, MsgPack, Pickle
+import json
+import msgpack
+import pickle
 
 
-def rw(buffer_size, ts_stamp=False):
-    filename = 'bob.bag'
-    # filename = BytesIO()
-    save = {'a': []}
-    bag = BagWriter(filename, buffer_size=buffer_size)
+def bagfile(kind):
+    bag = BagIt(kind)
 
-    for i in range(20):
-        d = {'one': 1, 'two': 2, 'stamp': time.time()}
+    copy = {
+        'test': [],
+        'bob': [],
+        'tom': []
+    }
 
-        if ts_stamp:
-            bag.push_stamp('a', d)
-        else:
-            bag.push('a', d)
-        save['a'].append(d)
+    d = {'a': 1.2345678}
+    tt = namedtuple('tt','a b c')  # this has issues
 
-    bag.close()
-    # filename.seek(0)
+    for i in range(10):
+        # t = tt('hello', i, 10*i)
+        t = (1,-1,0.00001,100000,)
+        bag.push('test', d)
+        bag.push('bob', t)
+        bag.push('tom', ('a', i,))
 
-    bag = BagReader()
-    data = bag.read(filename)
+        copy['test'].append(d)
+        copy['bob'].append(t)
+        copy['tom'].append(('a', i,))
 
-    # print(tuple(save['a'][0].keys()), tuple(data['a'][0].keys()))
+    fname = bag.write('bob', timestamp=False)
 
-    print(save)
-    print('-'*40)
+    # print(">> created:", fname)
+
+    data = bag.read(fname)
+
+    os.remove(fname)
+
+    print(copy)
     print(data)
 
-    assert type(data) == type(save)
-    assert len(data['a']) == len(save['a'])
-    assert tuple(save.keys()) == tuple(data.keys())
-
-    if ts_stamp:
-        # time stamp is added to the data: (data, time_stamp)
-        for a, b in zip(save, data):
-            assert a == b[0]
-    else:
-        assert tuple(save['a'][0].keys()) == tuple(data['a'][0].keys())  # push_stamp breaks this
-        assert save == data
-
-    # to see output: nosetests -vs test.py
-    print("{} is {:.1f} kB".format(filename, os.path.getsize(filename)/1000))
-
-    # clean up and delete file
-    os.remove(filename)
+    assert data == copy
 
 
-def test_rw_large_buffer():
-    rw(1000)
+def bagfile_rw(kind):
+    bag = BagIt(kind)
 
-
-def test_rw_small_buffer():
-    rw(10)
-
-
-def test_rw_large_buffer_time_stamp():
-    rw(1000, True)
-
-
-def test_rw_small_buffer_time_stamp():
-    rw(10, True)
-
-
-def test_messages():
-    filename = 's.bag'
-    save = {
+    copy = {
         'test': [],
-        'bob': []
+        'bob': [],
+        'tom': []
     }
-    bag = BagWriter(filename, buffer_size=10, pack=messages.serialize)
 
-    for i in range(20):
-        d = Pose(Vector(1, 1, 1), Quaternion(1, 1, 1, 1))
+    d = {'a': 1.2345678}
+    tt = namedtuple('tt','a b c')  # this has issues
+
+    for i in range(10):
+        # t = tt('hello', i, 10*i)
+        t = (1,-1,0.00001,100000,)
         bag.push('test', d)
+        bag.push('bob', t)
+        bag.push('tom', ('a', i,))
 
-        k = IMU(Vector(.1,.1,.1), Vector(.2,.2,.2), Vector(.3,.3,.3))
-        bag.push('bob', k)
+        copy['test'].append(d)
+        copy['bob'].append(t)
+        copy['tom'].append(('a', i,))
 
-        save['test'].append(d)
-        save['bob'].append(k)
+    fname = bag.write('bob', timestamp=False)
 
-    bag.close()
+    # print(">> created:", fname)
 
-    bag = BagReader(unpack=messages.deserialize)
-    load = bag.read(filename)
-    assert save == load
-    # print("*"*40)
-    # print('\nAre they the same?', save == load, '\n')
-    # print("*"*40)
-    #
-    # print('-'*40)
-    # print(save)
-    # print('-'*40)
-    # print(load)
-    # clean up and delete file
-    os.remove(filename)
+    # data = bag.read(fname)
+    if bag.packer.proto == 'json':
+        print("<<< json >>>")
+        with open(fname, 'rb') as fd:
+            data = json.load(fd)
+
+        for key, val in data.items():
+            if isinstance(val[0], list):
+                for i in range(len(val)):
+                    data[key][i] = tuple(data[key][i])
+    elif bag.packer.proto == 'pickle':
+        print("<<< pickle >>>")
+        with open(fname, 'rb') as fd:
+            data = pickle.load(fd)
+    elif bag.packer.proto == 'msgpack':
+        print("<<< msgpack >>>")
+        with open(fname, 'rb') as fd:
+            data = msgpack.unpack(fd, use_list=False, raw=False)
+
+        # The original arrays were turned into tuples
+        for key, val in data.items():
+            data[key] = list(data[key])
+    else:
+        assert False
+
+    os.remove(fname)
+
+    print("Copy\n", copy)
+    print("Data\n", data)
+
+    assert data == copy
 
 
-def test_new_messages():
-    filename = 's.bag'
-    save = {
-        'test': [],
-        'bob': []
-    }
+def test_json():
+    bagfile(Json)
 
-    # this is a simple message, only python types in it
-    Test = namedtuple('Test', 'a b c')
-    # this is a complex message, has other messages
-    Test2 = namedtuple('Test2', 'a b')
 
-    class myMessages(Messages):
-        """
-        How to add new messages?
-        """
-        def __init__(self):
-            Messages.__init__(self, sm={'Test': Test}, cm={'Test2': Test2})
+def test_json_lib():
+    bagfile_rw(Json)
 
-    msgs = myMessages()
-    bag = BagWriter(filename, buffer_size=10, pack=msgs.serialize)
 
-    for i in range(20):
-        d = Test(i, 2*i, 3*i)
-        k = Test2(Vector(i,i,i), Vector(2*i, 2*i, 2*i))
+def test_msgpack():
+    bagfile(MsgPack)
 
-        bag.push('bob', d)
-        save['bob'].append(d)
 
-        bag.push('test', k)
-        bag.push('test', i)
-        save['test'].append(k)
-        save['test'].append(i)
+def test_msgpack_lib():
+    bagfile_rw(MsgPack)
 
-    bag.close()
 
-    bag = BagReader(unpack=msgs.deserialize)
-    load = bag.read(filename)
-    assert save == load
-    # print("*"*40)
-    # print('\nAre they the same?', save == load, '\n')
-    # print("*"*40)
-    #
-    # print('-'*40)
-    # print(save)
-    # print('-'*40)
-    # print(load)
-    # clean up and delete file
-    os.remove(filename)
+def test_pickle():
+    bagfile(Pickle)
 
+
+def test_pickle_lib():
+    bagfile_rw(Pickle)
 
 def test_circularBuff():
     cb_len = 10
@@ -185,10 +148,3 @@ def test_circularBuff():
 
     for i, p in enumerate(range(90, 100)):
         assert data[i] == p
-
-
-try:
-    import pygecko
-
-except ImportError:
-    pass
