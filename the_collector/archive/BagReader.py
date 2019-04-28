@@ -53,12 +53,17 @@ class BagReader(object):
 
 from the_collector.protocols import Pickle, MsgPack, Json
 
+
 class BagReader2(object):
     """
     """
     # def __init__(self, unpacker=None):
     #     # self.ext_unpack = unpack
-
+    protocols = {
+        'json': Json,
+        'pickle': Pickle,
+        'msgpack': MsgPack
+    }
 
     def read(self, filename):
         """
@@ -70,23 +75,28 @@ class BagReader2(object):
           data points
         """
         t = filename.split('.')
-        proto = None
+        # proto = None
+        packer = None
         for p in t:
             if p in ['msgpack', 'pickle', 'json']:
                 proto = p
+                packer = self.protocols[p]()
+                break
 
-        if proto is None:
+        if packer is None:
             raise Exception("Couldn't determine protocol of file")
-
-        if proto == 'pickle':
-            packer = Json()
-        elif proto == 'msgpack':
-            packer = MsgPack()
         else:
-            packer = Pickle()
+            print(">> Reading[{}]: {}".format(proto, filename))
 
-        with open(filename, 'rb') as fd:
-            data = packer.unpack(fd)
+        return packer.unpack(filename)
+
+        # packer = self.protocols[proto]()
+
+        # with open(filename, 'rb') as fd:
+        #     # d = fd.read().decode('utf-8')
+        #     d = fd.read()
+        #     data = packer.unpack(d)
+        #     # data = packer.unpack(fd)
 
         # check to see if this is a file-like object
         # if (hasattr(filename, 'read') and hasattr(filename, 'write')):
@@ -107,4 +117,4 @@ class BagReader2(object):
         #         data[key] = []
         #     data[key].append(value)
 
-        return data
+        # return data

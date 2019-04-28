@@ -155,10 +155,11 @@ class BagWriter2(object):
         """
         self.buffer = {}
         self.packer = packer()
-        print(">> ", packer.proto)
+        print(">> ", self.packer.proto)
 
     def __del__(self):
-        self.write()  # this kills me on BytesIO, it closes the buffer
+        # self.write()  # this kills me on BytesIO, it closes the buffer
+        pass
 
     def push(self, key, msg):
         """
@@ -171,11 +172,16 @@ class BagWriter2(object):
         self.buffer[key].append(msg)
 
     def write(self, filename='data', timestamp=True):
+        if len(self.buffer) == 0:
+            return None
+
         if timestamp:
             dt = str(datetime.datetime.now()).replace(' ', '-')
             filename = "{}.{}.{}.bag".format(filename, dt, self.packer.proto)
         else:
             filename = "{}.{}.bag".format(filename, self.packer.proto)
+
+        # print("***", filename)
 
         with open(filename, 'wb') as fd:
             d = self.packer.pack(self.buffer)
