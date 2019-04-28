@@ -61,10 +61,10 @@ python:
 
 # install other libraries using pip
 install:
-    - pip3 install -U pip setuptools wheel nose build_utils msgpack simpmlejson
+    - pip install -U pip setuptools wheel nose build_utils msgpack simpmlejson
     # - pip install -U -r requirements.txt
     # - pip install -U opencv-contrib-python
-    - pip3 install .
+    - pip install .
 
 # command to run tests
 script: nosetests -v -w tests test.py
