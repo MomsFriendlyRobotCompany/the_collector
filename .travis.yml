@@ -5,7 +5,6 @@ sudo: false
 
 python:
     - "3.6"
-    - "3.7"
 
 # command to install dependencies that require sudo
 # https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
