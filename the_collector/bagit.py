@@ -56,15 +56,15 @@ class BagIt(object):
         else:
             filename = "{}.{}.bag".format(filename, self.packer.proto)
 
-        print("***", filename)
-        print(self.packer)
-        print(self.buffer)
+        # print("***", filename)
+        # print(self.packer)
+        # print(self.buffer)
 
         with open(filename, 'wb') as fd:
             d = self.packer.pack(self.buffer)
-            print("-"*40)
-            print(d)
-            print("-"*40)
+            # print("-"*40)
+            # print(d)
+            # print("-"*40)
             fd.write(d)
 
         self.buffer = {}
