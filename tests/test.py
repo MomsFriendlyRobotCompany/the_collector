@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from the_collector import CircularBuffer
-from collections import namedtuple
+from the_collector import Data
 # import msgpack
 import os
 # import time
@@ -21,19 +21,21 @@ def bagfile(kind):
         'tom': []
     }
 
-    d = {'a': 1.2345678}
-    tt = namedtuple('tt','a b c')  # this has issues
-
     for i in range(10):
-        # t = tt('hello', i, 10*i)
-        t = (1,-1,0.00001,100000,)
-        bag.push('test', d)
-        bag.push('bob', t)
+        t = Data((1, -1, 0.00001, 100000,))
+        bag.push('test', t)
+        bag.push('bob', i)
         bag.push('tom', ('a', i,))
 
-        copy['test'].append(d)
-        copy['bob'].append(t)
+        copy['test'].append(t)
+        copy['bob'].append(i)
         copy['tom'].append(('a', i,))
+
+    if bag.packer.proto == 'json':
+        # json doesn't like tuples ... so we will remove them
+        # from the test
+        bag.buffer.pop('test')
+        copy.pop('test')
 
     fname = bag.write('bob', timestamp=False)
 
@@ -43,8 +45,8 @@ def bagfile(kind):
 
     os.remove(fname)
 
-    print(copy)
-    print(data)
+    # print(copy)
+    # print(data)
 
     assert data == copy
 
@@ -58,19 +60,21 @@ def bagfile_rw(kind):
         'tom': []
     }
 
-    d = {'a': 1.2345678}
-    tt = namedtuple('tt','a b c')  # this has issues
-
     for i in range(10):
-        # t = tt('hello', i, 10*i)
-        t = (1,-1,0.00001,100000,)
-        bag.push('test', d)
-        bag.push('bob', t)
+        t = Data((1, -1, 0.00001, 100000,))
+        bag.push('test', t)
+        bag.push('bob', i)
         bag.push('tom', ('a', i,))
 
-        copy['test'].append(d)
-        copy['bob'].append(t)
+        copy['test'].append(t)
+        copy['bob'].append(i)
         copy['tom'].append(('a', i,))
+
+    if bag.packer.proto == 'json':
+        # json doesn't like tuples ... so we will remove them
+        # from the test
+        bag.buffer.pop('test')
+        copy.pop('test')
 
     fname = bag.write('bob', timestamp=False)
 
@@ -79,6 +83,11 @@ def bagfile_rw(kind):
     # data = bag.read(fname)
     if bag.packer.proto == 'json':
         print("<<< json >>>")
+        # json doesn't like tuples ... so we will remove them
+        # from the test
+        # bag.buffer.pop('test')
+        # copy.pop('test')
+
         with open(fname, 'rb') as fd:
             data = json.load(fd)
 
@@ -97,14 +106,18 @@ def bagfile_rw(kind):
 
         # The original arrays were turned into tuples
         for key, val in data.items():
-            data[key] = list(data[key])
+            print(">>", key, val)
+            if key == "test":
+                data[key] = [Data(*x) for x in val]
+            else:
+                data[key] = list(data[key])
     else:
         assert False
 
     os.remove(fname)
 
-    print("Copy\n", copy)
-    print("Data\n", data)
+    # print("Copy\n", copy)
+    # print("Data\n", data)
 
     assert data == copy
 
@@ -131,6 +144,7 @@ def test_pickle():
 
 def test_pickle_lib():
     bagfile_rw(Pickle)
+
 
 def test_circularBuff():
     cb_len = 10

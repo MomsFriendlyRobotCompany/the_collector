@@ -107,6 +107,26 @@ print('get cb[0]', cb[0])
 print('get last', cb.get_last())
 ```
 
+## Data Tuple
+
+Use a generic `namedtuple` for data storage. It will automatically insert a
+timestamp when created. This is useful for tagging data with a timestamp and
+not having to remember to do it yourself.
+
+**WARNING:** `json` and `msgpack` have issues with `tuples`, so this is best
+used with `pickle` or you have to accept `json` will turn it into a list and
+`msgpack` will turn it into a regular `tuple`. Either way, you still keep the
+timestamp.
+
+```python
+from the_collector import Data
+
+d = Data((1,2,3,))  # timestamp generate when made
+
+print("Data[{}]: {}".format(d.timestamp, d.data))
+print("Namedtuple output:", d)
+```
+
 # Todo
 
 - look at enabling `BytesIO` for testing/working so you don't litter filing system
@@ -116,6 +136,7 @@ with test bag files
 
 Date        | Version| Notes
 ------------|--------|----------------------------------
+2019-07-06  | 0.8.2  | add generic data container
 2019-04-28  | 0.8.0  | can store data using `json`, `pickle`, or `msgpack`
 2018-07-25  | 0.7.0  | added `msgpack` messages and a way to do custom messages
 2018-07-14  | 0.6.0  | changed interface to support buffered writing to disk
