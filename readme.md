@@ -56,12 +56,12 @@ import json
 
 d = {'a': 1, 'b': 2}
 
-bag = BagIt(Json)
-# bag = BagIt(Pickle)
-# bag = BagIt(MsgPack)
+bag = BagIt(Json)      # ascii, cross platform
+# bag = BagIt(Pickle)  # binary, python only but handles python objects well 
+# bag = BagIt(MsgPack) # binary, may have to write special packer for classes 
 
 for i in range(10):
-    bag.push('test', d)
+    bag.push('test', d) # push value d to key 'test'
     bag.push('bob', d)
     bag.push('tom', ('a', i,))
 
@@ -72,7 +72,7 @@ fname = bag.write('bob', timestamp=False)
 
 print(">> created:", fname)
 
-data = bag.read(fname)
+data = bag.read(fname) # data is just a dictionary
 print(data)
 ```
 
@@ -91,6 +91,9 @@ for key, val in data.items():
 ```
 
 ## Circular Buffer
+
+This is perhaps a little out of place, but I use circular buffers with handling data
+so I stuck it in this library.
 
 ```python
 from the_collector import CircularBuffer
@@ -129,8 +132,13 @@ print("Namedtuple output:", d)
 
 # Todo
 
+- add github actions
 - look at enabling `BytesIO` for testing/working so you don't litter filing system
 with test bag files
+- support PEP517 and replace `setup.py` with `pyprogram.toml`
+- move tests from `nose` to `pytest`
+- see if there is value in `matplotlib` integration or just add an iterator capability
+    - Example: `plt.plot(mydata['bob'])` and will plot 2D or 3D data
 
 # Change Log
 
