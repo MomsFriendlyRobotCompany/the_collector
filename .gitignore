@@ -10,3 +10,5 @@ test*.json
 *.bag
 archive
 old
+.pytest_cache
+.mypy_cache
