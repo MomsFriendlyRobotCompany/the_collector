@@ -1,0 +1,43 @@
+[tool.poetry]
+name = "the_collector"
+version = "0.8.4"
+description = "A library to store robot data in a msgpack format"
+authors = ["walchko <walchko@users.noreply.github.com>"]
+readme = "readme.md"
+license = "MIT"
+homepage = "https://pypi.org/project/the-collector/"
+repository = 'http://github.com/MomsFriendlyRobotCompany/the_collector'
+# documentation = "http://..."
+keywords = ['library', 'robotics', 'robot', 'msgpack', 'storage', 'json', 'pickle']
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: 3.7',
+    'Topic :: Software Development :: Libraries',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+    'Topic :: Software Development :: Libraries :: Application Frameworks'
+]
+
+# [tool.poetry.scripts]
+# # script_name = 'myscript:main'
+# servoAX12 = "pyservos.bin.servoAX12:main"
+
+[tool.poetry.dependencies]
+python = ">=3.6"
+# colorama = "*"
+simplejson = "*"
+msgpack = "*"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+# mypy = "*"
+
+# [mypy-pi_servo_serial]
+# ignore_missing_imports = True
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

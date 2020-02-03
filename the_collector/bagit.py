@@ -89,30 +89,31 @@ class BagIt(object):
                 if p == self.packer.proto:
                     return self.packer.unpack(filename)
                 else:
-                    return self.readOther(filename, p)
+                    # return self.readOther(filename, p)
+                    raise Exception(f"File is {p} protocol, this Bagit is {self.packer.proto}")
 
         # if packer is None:
         raise Exception("Couldn't determine protocol of file:", filename)
 
         # return self.packer.unpack(filename)
 
-    def readOther(self, filename, proto):
-        """
-        Given a filename, it opens it and read all data into memory and return
-        Inputs:
-          filename - name of file
-          proto - protocol name: msgpack, json, pickle
-        Return:
-          dict() with keys for each recorded data stream and a list/tuple of
-          data points
-        """
-        # t = filename.split('.')
-        # packer = None
-        # for p in t:
-        #     if p in ['msgpack', 'pickle', 'json']:
-        #         packer = self.protocols[p]()
-        #         print(">> Reading[{}]: {}".format(p, filename))
-        #         break
-        packer = self.protocols[proto]()
-
-        return packer.unpack(filename)
+    # def readOther(self, filename, proto):
+    #     """
+    #     Given a filename, it opens it and read all data into memory and return
+    #     Inputs:
+    #       filename - name of file
+    #       proto - protocol name: msgpack, json, pickle
+    #     Return:
+    #       dict() with keys for each recorded data stream and a list/tuple of
+    #       data points
+    #     """
+    #     # t = filename.split('.')
+    #     # packer = None
+    #     # for p in t:
+    #     #     if p in ['msgpack', 'pickle', 'json']:
+    #     #         packer = self.protocols[p]()
+    #     #         print(">> Reading[{}]: {}".format(p, filename))
+    #     #         break
+    #     packer = self.protocols[proto]()
+    #
+    #     return packer.unpack(filename)
