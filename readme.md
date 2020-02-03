@@ -2,8 +2,10 @@
 
 # The Collector
 
+[![Actions Status](https://github.com/MultipedRobotics/dh/workflows/CheckPackage/badge.svg)](https://github.com/MultipedRobotics/pyservos/actions)
+![GitHub](https://img.shields.io/github/license/multipedrobotics/pyservos)
 [![Latest Version](https://img.shields.io/pypi/v/the-collector.svg)](https://pypi.python.org/pypi/the-collector/)
-[![License](https://img.shields.io/pypi/l/the-collector.svg)](https://pypi.python.org/pypi/the-collector/)
+<!-- [![License](https://img.shields.io/pypi/l/the-collector.svg)](https://pypi.python.org/pypi/the-collector/) -->
 [![image](https://img.shields.io/pypi/pyversions/the-collector.svg)](https://pypi.python.org/pypi/the-collector)
 [![image](https://img.shields.io/pypi/format/the-collector.svg)](https://pypi.python.org/pypi/the-collector)
 
@@ -57,8 +59,8 @@ import json
 d = {'a': 1, 'b': 2}
 
 bag = BagIt(Json)      # ascii, cross platform
-# bag = BagIt(Pickle)  # binary, python only but handles python objects well 
-# bag = BagIt(MsgPack) # binary, may have to write special packer for classes 
+# bag = BagIt(Pickle)  # binary, python only but handles python objects well
+# bag = BagIt(MsgPack) # binary, may have to write special packer for classes
 
 for i in range(10):
     bag.push('test', d) # push value d to key 'test'

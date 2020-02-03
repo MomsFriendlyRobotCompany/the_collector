@@ -10,6 +10,7 @@ from the_collector import Json, MsgPack, Pickle
 import json
 import msgpack
 import pickle
+import pytest
 
 
 def bagfile(kind):
