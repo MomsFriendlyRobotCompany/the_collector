@@ -5,6 +5,8 @@ try:
 except ImportError:
     import json
 
+import io    # gzip to string
+import gzip  # compression
 # try:
 #     import msgpack
 # except ImportError:
@@ -21,7 +23,7 @@ except ImportError:
 #     proto = None
 
 
-class Pickle(object):
+class Pickle:
     def __init__(self):
         self.proto = "pickle"
 
@@ -35,20 +37,35 @@ class Pickle(object):
         return data
 
 
-class Json(object):
+class Json:
     def __init__(self, compress=False, use_tuples=True):
         self.use_tuples = use_tuples
+        self.compress(compress)
+
+    def compress(self, compress):
         if compress:
             self.proto = "json-gz"
         else:
             self.proto = "json"
 
     def pack(self, data):
-        return json.dumps(data).encode("utf-8")
+        if self.proto == "json-gz":
+            # with gzip.open(filename, 'rb') as f:
+            #     data = json.load(f)
+            out = io.BytesIO()
+            with gzip.GzipFile(fileobj=out, mode='wb') as fo:
+                fo.write(json.dumps(data).encode("utf-8"))
+            return out.getvalue()
+        else:
+            return json.dumps(data).encode("utf-8")
 
     def unpack(self, filename):
-        with open(filename, 'rb') as fd:
-            data = json.load(fd)
+        if self.proto == "json-gz":
+            with gzip.open(filename, 'rb') as fd:
+                data = json.load(fd)
+        else:
+            with open(filename, 'rb') as fd:
+                data = json.load(fd)
 
         if self.use_tuples:
             for key, val in data.items():
@@ -67,7 +84,7 @@ class Json(object):
 try:
     import msgpack
 
-    class MsgPack(object):
+    class MsgPack:
         def __init__(self, pack=None, unpack=None):
             self.proto = "msgpack"
             self.pack_hook = pack
@@ -101,10 +118,10 @@ try:
 except ImportError:
     class MsgPack(object):
         def __init__(self):
-            raise Exception("WARNING: msgpack not found")
+            raise Exception("WARNING: msgpack not found, install with `pip install msgpack`")
 
-        def packb(self, data):
+        def pack(self, data):
             return None
 
-        def unpackb(self, filename):
+        def unpack(self, filename):
             return None

@@ -83,7 +83,7 @@ class BagIt(object):
         t = filename.split('.')
         # packer = None
         for p in t:
-            if p in ['msgpack', 'pickle', 'json']:
+            if p in ['msgpack', 'pickle', 'json', "json-gz"]:
                 # packer = self.protocols[p]()
                 print(">> Reading[{}]: {}".format(p, filename))
                 if p == self.packer.proto:

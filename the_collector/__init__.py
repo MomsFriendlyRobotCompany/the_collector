@@ -6,9 +6,9 @@ from the_collector.protocols import Json, MsgPack, Pickle
 from the_collector.data import Data
 
 try:
-    from importlib_metadata import version # type: ignore
-except ImportError:
     from importlib.metadata import version # type: ignore
+except ImportError:
+    from importlib_metadata import version # type: ignore
 
 __license__ = "MIT"
 __author__ = "Kevin J. Walchko"
