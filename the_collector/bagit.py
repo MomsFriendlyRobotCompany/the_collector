@@ -8,7 +8,7 @@ class BagIt(object):
     protocols = {
         'json': Json,
         'pickle': Pickle,
-        'msgpack': MsgPack
+        #'msgpack': MsgPack
     }
 
     def __init__(self, packer):
