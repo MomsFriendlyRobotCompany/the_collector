@@ -1,4 +1,9 @@
-from the_collector.protocols import Pickle, MsgPack, Json
+##############################################
+# The MIT License (MIT)
+# Copyright (c) 2017 Kevin Walchko
+# see LICENSE for full details
+##############################################
+from the_collector.protocols import Pickle, Json
 import datetime
 
 
