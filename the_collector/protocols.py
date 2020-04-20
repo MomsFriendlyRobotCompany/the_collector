@@ -1,26 +1,12 @@
-# from enum import Enum
+##############################################
+# The MIT License (MIT)
+# Copyright (c) 2017 Kevin Walchko
+# see LICENSE for full details
+##############################################
 import pickle
-try:
-    import simplejson as json
-except ImportError:
-    import json
-
+import simplejson as json
 import io    # gzip to string
 import gzip  # compression
-# try:
-#     import msgpack
-# except ImportError:
-#     class msgpack(object):
-#         def __init__(self):
-#             raise Exception("WARNING: msgpack not found")
-#         def packb(self, data): return None
-#         def unpackb(self, data): return None
-
-
-# Protocols = Enum('Protocols', 'json pickle msgpack')
-
-# class Base(object):
-#     proto = None
 
 
 class Pickle:
