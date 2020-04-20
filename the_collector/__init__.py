@@ -12,5 +12,4 @@ except ImportError:
 
 __license__ = "MIT"
 __author__ = "Kevin J. Walchko"
-# __version__ = '0.8.2'
 __version__ = version("the_collector")
