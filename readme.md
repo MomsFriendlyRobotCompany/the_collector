@@ -132,17 +132,19 @@ print("Namedtuple output:", d)
 
 # Todo
 
-[x] add github actions
-[ ] look at enabling `BytesIO` for testing/working so you don't litter filing system
+- [x] add github actions
+- [ ] look at enabling `BytesIO` for testing/working so you don't litter filing system
 with test bag files
-[x] support PEP517 and replace `setup.py` with `pyprogram.toml`
-[x] move tests from `nose` to `pytest`
+- [x] support PEP517 and replace `setup.py` with `pyprogram.toml`
+- [x] move tests from `nose` to `pytest`
+- [x] remove `msgpack`, there is no advantage to it over `pickle`(python only) or `json`(cross platform)
+- [x] add `json` compression back in
 
 # Change Log
 
 Date        | Version| Notes
 ------------|--------|----------------------------------
-2020-04-19  | 0.8.5  | removed `msgpack`, there is no advantage to it over `pickle`(python only) or `json`(cross platform)
+2020-04-19  | 0.8.5  | removed `msgpack`
 2019-07-06  | 0.8.2  | add generic data container
 2019-04-28  | 0.8.0  | can store data using `json`, `pickle`, or `msgpack`
 2018-07-25  | 0.7.0  | added `msgpack` messages and a way to do custom messages
