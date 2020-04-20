@@ -1,3 +1,8 @@
+##############################################
+# The MIT License (MIT)
+# Copyright (c) 2017 Kevin Walchko
+# see LICENSE for full details
+##############################################
 from the_collector.circular_buffer import CircularBuffer
 from the_collector.bagit import BagIt
 from the_collector.protocols import Json, Pickle
