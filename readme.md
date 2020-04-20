@@ -2,10 +2,9 @@
 
 # The Collector
 
-[![Actions Status](https://github.com/MultipedRobotics/dh/workflows/CheckPackage/badge.svg)](https://github.com/MultipedRobotics/pyservos/actions)
-![GitHub](https://img.shields.io/github/license/multipedrobotics/pyservos)
+[![Actions Status](https://github.com/MomsFriendlyRobotCompany/the-collector/workflows/CheckPackage/badge.svg)](https://github.com/MomsFriendlyRobotCompany/the-collector/actions)
+![GitHub](https://img.shields.io/github/license/MomsFriendlyRobotCompany/the-collector)
 [![Latest Version](https://img.shields.io/pypi/v/the-collector.svg)](https://pypi.python.org/pypi/the-collector/)
-<!-- [![License](https://img.shields.io/pypi/l/the-collector.svg)](https://pypi.python.org/pypi/the-collector/) -->
 [![image](https://img.shields.io/pypi/pyversions/the-collector.svg)](https://pypi.python.org/pypi/the-collector)
 [![image](https://img.shields.io/pypi/format/the-collector.svg)](https://pypi.python.org/pypi/the-collector)
 
