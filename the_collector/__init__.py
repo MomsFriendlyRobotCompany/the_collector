@@ -1,15 +1,13 @@
 from the_collector.circular_buffer import CircularBuffer
-# from the_collector.utils import array_unpack, array_pack
-# from the_collector.utils import file_size, rm
 from the_collector.bagit import BagIt
 from the_collector.protocols import Json, Pickle
 from the_collector.data import Data
 
-try:
-    import msgpack
-    from the_collector.protocols import MsgPack
-except ImportError:
-    pass
+# try:
+#     import msgpack
+#     from the_collector.protocols import MsgPack
+# except ImportError:
+#     pass
 
 try:
     from importlib.metadata import version # type: ignore
