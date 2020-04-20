@@ -6,9 +6,9 @@ import os
 # import time
 # from io import BytesIO
 from the_collector import BagIt
-from the_collector import Json, MsgPack, Pickle
+from the_collector import Json, Pickle
 import json
-import msgpack
+# import msgpack
 import pickle
 import pytest
 
@@ -141,12 +141,12 @@ def test_json_lib():
     bagfile_rw(Json)
 
 
-def test_msgpack():
-    bagfile(MsgPack)
+# def test_msgpack():
+#     bagfile(MsgPack)
 
 
-def test_msgpack_lib():
-    bagfile_rw(MsgPack)
+# def test_msgpack_lib():
+#     bagfile_rw(MsgPack)
 
 
 def test_pickle():
