@@ -51,7 +51,7 @@ the data to a file.
 #!/usr/bin/env python3
 from __future__ import print_function
 from the_collector import BagIt
-from the_collector import Json, MsgPack, Pickle
+from the_collector import Json, Pickle
 import json
 
 
@@ -59,7 +59,6 @@ d = {'a': 1, 'b': 2}
 
 bag = BagIt(Json)      # ascii, cross platform
 # bag = BagIt(Pickle)  # binary, python only but handles python objects well
-# bag = BagIt(MsgPack) # binary, may have to write special packer for classes
 
 for i in range(10):
     bag.push('test', d) # push value d to key 'test'
@@ -133,18 +132,17 @@ print("Namedtuple output:", d)
 
 # Todo
 
-- add github actions
-- look at enabling `BytesIO` for testing/working so you don't litter filing system
+[x] add github actions
+[ ] look at enabling `BytesIO` for testing/working so you don't litter filing system
 with test bag files
-- support PEP517 and replace `setup.py` with `pyprogram.toml`
-- move tests from `nose` to `pytest`
-- see if there is value in `matplotlib` integration or just add an iterator capability
-    - Example: `plt.plot(mydata['bob'])` and will plot 2D or 3D data
+[x] support PEP517 and replace `setup.py` with `pyprogram.toml`
+[x] move tests from `nose` to `pytest`
 
 # Change Log
 
 Date        | Version| Notes
 ------------|--------|----------------------------------
+2020-04-19  | 0.8.5  | removed `msgpack`, there is no advantage to it over `pickle`(python only) or `json`(cross platform)
 2019-07-06  | 0.8.2  | add generic data container
 2019-04-28  | 0.8.0  | can store data using `json`, `pickle`, or `msgpack`
 2018-07-25  | 0.7.0  | added `msgpack` messages and a way to do custom messages
