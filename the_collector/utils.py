@@ -5,16 +5,6 @@
 ##############################################
 import os
 
-# useful?
-# try:
-#     import simplejson as json
-# except ImportError:
-#     import json
-
-
-
-
-
 
 try:
     import numpy as np
@@ -41,14 +31,15 @@ try:
         return img
 
 except ImportError:
-    import warnings
-    warnings.warn('WARNING: numpy is not installed, cannot handle images')
+    pass
+#     import warnings
+#     warnings.warn('WARNING: numpy is not installed, cannot handle images')
 
-    def array_pack(img):
-        raise NotImplementedError("array_pack(): numpy not installed")
+#     def array_pack(img):
+#         raise NotImplementedError("array_pack(): numpy not installed")
 
-    def array_unpack(msg):
-        raise NotImplementedError("array_unpack(): numpy not installed")
+#     def array_unpack(msg):
+#         raise NotImplementedError("array_unpack(): numpy not installed")
 
 
 def file_size(filename):
