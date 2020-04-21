@@ -6,40 +6,11 @@
 import os
 
 
-try:
-    import numpy as np
-
-    def array_pack(img):
-        """
-        img: numpy array. I primarily use this for OpenCV images
-        """
-        d = img.tobytes()
-        s = img.shape
-        t = img.dtype
-        # msg = Image(s, d, makets())
-        return (s, t, d)
-
-    def array_unpack(shape, data, dtype=np.uint8):
-        """
-        I primarily use this with OpenCV images, so I think in those terms
-        shape: tuple(height, width, colors)
-        dtype: numpy data type like np.uint8
-        data: byte array that needs to be turned back into an array
-        """
-        img = np.frombytes(data, dtype=dtype)
-        img.reshape(shape)
-        return img
-
-except ImportError:
-    pass
-#     import warnings
-#     warnings.warn('WARNING: numpy is not installed, cannot handle images')
-
-#     def array_pack(img):
-#         raise NotImplementedError("array_pack(): numpy not installed")
-
-#     def array_unpack(msg):
-#         raise NotImplementedError("array_unpack(): numpy not installed")
+def bag_info(bag):
+    print('Bag keys:')
+    print('-'*50)
+    for k in bag.keys():
+        print(f'  {k:>10}: {len(bag[k]):<7}')
 
 
 def file_size(filename):
@@ -47,7 +18,6 @@ def file_size(filename):
     Returns size of filename in kB
     """
     size = os.path.getsize(filename)//(2**10)
-    # print('{}: {} kb'.format(self.filename, size))
     return size
 
 
@@ -59,3 +29,39 @@ def rm(path, filename):
     for f in files:
         if f == filename:
             os.remove(filename)
+
+
+# try:
+#     import numpy as np
+#
+#     def array_pack(img):
+#         """
+#         img: numpy array. I primarily use this for OpenCV images
+#         """
+#         d = img.tobytes()
+#         s = img.shape
+#         t = img.dtype
+#         # msg = Image(s, d, makets())
+#         return (s, t, d)
+#
+#     def array_unpack(shape, data, dtype=np.uint8):
+#         """
+#         I primarily use this with OpenCV images, so I think in those terms
+#         shape: tuple(height, width, colors)
+#         dtype: numpy data type like np.uint8
+#         data: byte array that needs to be turned back into an array
+#         """
+#         img = np.frombytes(data, dtype=dtype)
+#         img.reshape(shape)
+#         return img
+#
+# except ImportError:
+#     pass
+# #     import warnings
+# #     warnings.warn('WARNING: numpy is not installed, cannot handle images')
+#
+# #     def array_pack(img):
+# #         raise NotImplementedError("array_pack(): numpy not installed")
+#
+# #     def array_unpack(msg):
+# #         raise NotImplementedError("array_unpack(): numpy not installed")

@@ -7,16 +7,17 @@ from the_collector.circular_buffer import CircularBuffer
 from the_collector.bagit import BagIt
 from the_collector.protocols import Json, Pickle
 from the_collector.data import Data
+from the_collector.utils import bag_info
 
 try:
     import numpy as np
-    from the_collector.utils import array_pack, array_unpack
+    from the_collector.extra_numpy import array_pack, array_unpack
 except ImportError:
     pass
 
 # try:
 #     import msgpack
-#     from the_collector.protocols import MsgPack
+#     from the_collector.extra_msgpack import MsgPack
 # except ImportError:
 #     pass
 
