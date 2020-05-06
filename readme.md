@@ -16,11 +16,11 @@ for each data series stored.
 
 This was written for a class I taught on robotics. It is meant to be simple and
 teach the students some things. There are probably better solutions out there,
-but I like this. :smirk:
+but I like this.
 
 Additionally, there is nothing magically about what this does:
 
-- It provides a generic interface to using `pickle`, `json`, or `msgpack` as
+- It provides a generic interface to using `pickle` or `json` as
 the protocol for saving data to disk
 - It also allows you to convert between them if needed
 - Bag files can be read using the original protocol, thus data is never lost
