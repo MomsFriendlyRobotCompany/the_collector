@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 from the_collector import CircularBuffer
 from the_collector import Data
-# import msgpack
 import os
-# import time
-# from io import BytesIO
 from the_collector import BagIt
 from the_collector import Json, Pickle
 import json
