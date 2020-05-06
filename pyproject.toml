@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "the_collector"
-version = "0.8.5"
-description = "A library to store robot data in a msgpack format"
+version = "0.8.6"
+description = "A library to store robot data in common formats"
 authors = ["walchko <walchko@users.noreply.github.com>"]
 readme = "readme.md"
 license = "MIT"
