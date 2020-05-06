@@ -7,7 +7,9 @@ from the_collector.circular_buffer import CircularBuffer
 from the_collector.bagit import BagIt
 from the_collector.protocols import Json, Pickle
 from the_collector.data import Data
-from the_collector.utils import bag_info
+# from the_collector.utils import bag_info
+# from colorama import Fore
+
 
 try:
     import numpy as np

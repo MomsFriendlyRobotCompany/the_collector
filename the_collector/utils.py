@@ -6,29 +6,29 @@
 import os
 
 
-def bag_info(bag):
-    print('Bag keys:')
-    print('-'*50)
-    for k in bag.keys():
-        print(f'  {k:>10}: {len(bag[k]):<7}')
-
-
-def file_size(filename):
-    """
-    Returns size of filename in kB
-    """
-    size = os.path.getsize(filename)//(2**10)
-    return size
-
-
-def rm(path, filename):
-    """
-    Given a path and a file name, it removes the file if found.
-    """
-    files = os.listdir(path)
-    for f in files:
-        if f == filename:
-            os.remove(filename)
+# def bag_info(bag):
+#     print('Bag keys:')
+#     print('-'*50)
+#     for k in bag.keys():
+#         print(f'  {k:>10}: {len(bag[k]):<7}')
+#
+#
+# def file_size(filename):
+#     """
+#     Returns size of filename in kB
+#     """
+#     size = os.path.getsize(filename)//(2**10)
+#     return size
+#
+#
+# def rm(path, filename):
+#     """
+#     Given a path and a file name, it removes the file if found.
+#     """
+#     files = os.listdir(path)
+#     for f in files:
+#         if f == filename:
+#             os.remove(filename)
 
 
 # try:

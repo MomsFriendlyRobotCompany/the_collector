@@ -7,11 +7,14 @@ import pickle
 import simplejson as json
 import io    # gzip to string
 import gzip  # compression
+import attr
 
 
+@attr.s(slots=True)
 class Pickle:
-    def __init__(self):
-        self.proto = "pickle"
+    # def __init__(self):
+    #     self.proto = "pickle"
+    proto = attr.ib(init=False, default="pickle")
 
     def pack(self, data):
         return pickle.dumps(data)
