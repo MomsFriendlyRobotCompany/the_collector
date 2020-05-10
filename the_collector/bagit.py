@@ -6,6 +6,7 @@
 from the_collector.protocols import Pickle, Json
 import datetime
 from collections import defaultdict
+import os
 
 
 class BagIt(object):
@@ -59,6 +60,7 @@ class BagIt(object):
         self.buffer[key].append(msg)
 
     def write(self, filename='data', timestamp=True):
+        filename = os.path.expanduser(filename)
         if len(self.buffer) == 0:
             return None
 
@@ -86,6 +88,7 @@ class BagIt(object):
           dict() with keys for each recorded data stream and a list/tuple of
           data points
         """
+        filename = os.path.expanduser(filename)
         t = filename.split('.')
         p = t[-2]
 
