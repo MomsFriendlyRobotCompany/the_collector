@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "the_collector"
-version = "0.8.6"
+version = "0.8.7"
 description = "A library to store robot data in common formats"
 authors = ["walchko <walchko@users.noreply.github.com>"]
 readme = "readme.md"
