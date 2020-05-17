@@ -1,15 +1,18 @@
-from the_collector.protocols import Pickle, MsgPack, Json
+##############################################
+# The MIT License (MIT)
+# Copyright (c) 2017 Kevin Walchko
+# see LICENSE for full details
+##############################################
+from the_collector.protocols import Pickle, Json
 import datetime
+from collections import defaultdict
+import os
 
 
 class BagIt(object):
     """
     """
-    protocols = {
-        'json': Json,
-        'pickle': Pickle,
-        'msgpack': MsgPack
-    }
+    __slots__ = ('buffer', 'packer')
 
     def __init__(self, packer):
         """
@@ -17,22 +20,32 @@ class BagIt(object):
           .bag is appended) OR a file-like object from io.Bytes or something
         buffer_size: number of Bytes, default 10MB
         """
-        self.buffer = {}
+        # self.buffer = {}
+        self.buffer = defaultdict(list)
         self.packer = packer()
-        print(">> ", self.packer.proto)
+        # print(">> ", self.packer.proto)
 
     def __del__(self):
         # self.write()  # this kills me on BytesIO, it closes the buffer
         pass
 
+    def info(self):
+        print('Bag keys:')
+        print('-'*50)
+        for k in self.buffer.keys():
+            print(f'  {k:>10}: {len(self.buffer[k]):<7}')
+
     def fill(self, data):
         """
         Clears buffer and fills it data (dictionary)
         """
-        self.buffer = {}
+        if not isinstance(data, dict):
+            raise Exception(f"data is not a dict, it is: {type(data)}")
+
+        self.buffer.clear()
         print(".fill() ----------------------------")
         for key, val in data.items():
-            print("- {}: {}".format(key, len(val)))
+            print("- {key}: {len(val)}")
             for v in val:
                 self.push(key, v)
 
@@ -41,33 +54,28 @@ class BagIt(object):
         Push another message and a key into the buffer. Once the buffer limit
         is reached it is written to a file.
         """
-        if key not in self.buffer.keys():
-            self.buffer[key] = []
+        # if key not in self.buffer.keys():
+        #     self.buffer[key] = []
 
         self.buffer[key].append(msg)
 
     def write(self, filename='data', timestamp=True):
+        filename = os.path.expanduser(filename)
         if len(self.buffer) == 0:
             return None
 
         if timestamp:
             dt = str(datetime.datetime.now()).replace(' ', '-')
-            filename = "{}.{}.{}.bag".format(filename, dt, self.packer.proto)
+            filename = f"{filename}.{dt}.{self.packer.proto}.bag"
         else:
-            filename = "{}.{}.bag".format(filename, self.packer.proto)
-
-        # print("***", filename)
-        # print(self.packer)
-        # print(self.buffer)
+            filename = f"{filename}.{self.packer.proto}.bag"
 
         with open(filename, 'wb') as fd:
             d = self.packer.pack(self.buffer)
-            # print("-"*40)
-            # print(d)
-            # print("-"*40)
             fd.write(d)
 
-        self.buffer = {}
+        # self.buffer = {}
+        self.buffer.clear()
 
         return filename
 
@@ -80,40 +88,17 @@ class BagIt(object):
           dict() with keys for each recorded data stream and a list/tuple of
           data points
         """
+        filename = os.path.expanduser(filename)
         t = filename.split('.')
-        # packer = None
-        for p in t:
-            if p in ['msgpack', 'pickle', 'json']:
-                # packer = self.protocols[p]()
-                print(">> Reading[{}]: {}".format(p, filename))
-                if p == self.packer.proto:
-                    return self.packer.unpack(filename)
-                else:
-                    # return self.readOther(filename, p)
-                    raise Exception(f"File is {p} protocol, this Bagit is {self.packer.proto}")
+        p = t[-2]
 
-        # if packer is None:
-        raise Exception("Couldn't determine protocol of file:", filename)
+        if p in ['msgpack', 'pickle', 'json', "json-gz"]:
+            print(f">> Reading[{p}]: {filename}")
+            if p != self.packer.proto:
+                raise Exception(f"File is {p} protocol, this Bagit is {self.packer.proto}")
+
+            return self.packer.unpack(filename)
+        else:
+            raise Exception("Couldn't determine protocol of file:", filename)
 
         # return self.packer.unpack(filename)
-
-    # def readOther(self, filename, proto):
-    #     """
-    #     Given a filename, it opens it and read all data into memory and return
-    #     Inputs:
-    #       filename - name of file
-    #       proto - protocol name: msgpack, json, pickle
-    #     Return:
-    #       dict() with keys for each recorded data stream and a list/tuple of
-    #       data points
-    #     """
-    #     # t = filename.split('.')
-    #     # packer = None
-    #     # for p in t:
-    #     #     if p in ['msgpack', 'pickle', 'json']:
-    #     #         packer = self.protocols[p]()
-    #     #         print(">> Reading[{}]: {}".format(p, filename))
-    #     #         break
-    #     packer = self.protocols[proto]()
-    #
-    #     return packer.unpack(filename)

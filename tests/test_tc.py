@@ -1,20 +1,20 @@
 #!/usr/bin/env python
 from the_collector import CircularBuffer
 from the_collector import Data
-# import msgpack
 import os
-# import time
-# from io import BytesIO
 from the_collector import BagIt
-from the_collector import Json, MsgPack, Pickle
+from the_collector import Json, Pickle
 import json
-import msgpack
+# import msgpack
 import pickle
 import pytest
 
 
-def bagfile(kind):
+def bagfile(kind, compress=False):
     bag = BagIt(kind)
+
+    if compress:
+        bag.packer.compress(True)
 
     copy = {
         'test': [],
@@ -32,7 +32,7 @@ def bagfile(kind):
         copy['bob'].append(i)
         copy['tom'].append(('a', i,))
 
-    if bag.packer.proto == 'json':
+    if bag.packer.proto in ['json', 'json-gz']:
         # json doesn't like tuples ... so we will remove them
         # from the test
         bag.buffer.pop('test')
@@ -52,8 +52,11 @@ def bagfile(kind):
     assert data == copy
 
 
-def bagfile_rw(kind):
+def bagfile_rw(kind, compress=False):
     bag = BagIt(kind)
+
+    if compress:
+        bag.packer.compress(True)
 
     copy = {
         'test': [],
@@ -71,7 +74,7 @@ def bagfile_rw(kind):
         copy['bob'].append(i)
         copy['tom'].append(('a', i,))
 
-    if bag.packer.proto == 'json':
+    if bag.packer.proto in ['json', 'json-gz']:
         # json doesn't like tuples ... so we will remove them
         # from the test
         bag.buffer.pop('test')
@@ -127,16 +130,20 @@ def test_json():
     bagfile(Json)
 
 
+def test_json_compress():
+    bagfile(Json, compress=True)
+
+
 def test_json_lib():
     bagfile_rw(Json)
 
 
-def test_msgpack():
-    bagfile(MsgPack)
+# def test_msgpack():
+#     bagfile(MsgPack)
 
 
-def test_msgpack_lib():
-    bagfile_rw(MsgPack)
+# def test_msgpack_lib():
+#     bagfile_rw(MsgPack)
 
 
 def test_pickle():
