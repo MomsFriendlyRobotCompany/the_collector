@@ -21,22 +21,14 @@ classifiers = [
     'Topic :: Software Development :: Libraries :: Application Frameworks'
 ]
 
-# [tool.poetry.scripts]
-# # script_name = 'myscript:main'
-# servoAX12 = "pyservos.bin.servoAX12:main"
-
 [tool.poetry.dependencies]
 python = ">=3.6"
-# colorama = "*"
+colorama = "*"
 simplejson = "*"
 msgpack = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
-# mypy = "*"
-
-# [mypy-pi_servo_serial]
-# ignore_missing_imports = True
 
 [build-system]
 requires = ["poetry>=0.12"]
