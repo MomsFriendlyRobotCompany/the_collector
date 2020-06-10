@@ -26,10 +26,12 @@ class Pickle:
         return data
 
 
+# @attr.s(slots=True)
 class Json:
     def __init__(self, compress=False, use_tuples=True):
         self.use_tuples = use_tuples
         self.compress(compress)
+
 
     def compress(self, compress):
         if compress:
