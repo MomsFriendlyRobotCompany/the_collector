@@ -7,6 +7,7 @@
 [![Latest Version](https://img.shields.io/pypi/v/the-collector.svg)](https://pypi.python.org/pypi/the-collector/)
 [![image](https://img.shields.io/pypi/pyversions/the-collector.svg)](https://pypi.python.org/pypi/the-collector)
 [![image](https://img.shields.io/pypi/format/the-collector.svg)](https://pypi.python.org/pypi/the-collector)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/opencv_camera?color=aqua)
 
 **This is still under heavy development**
 
@@ -49,7 +50,6 @@ the data to a file.
 
 ```python
 #!/usr/bin/env python3
-from __future__ import print_function
 from the_collector import BagIt
 from the_collector import Json, Pickle
 import json
