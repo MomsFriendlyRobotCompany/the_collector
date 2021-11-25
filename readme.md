@@ -90,26 +90,6 @@ for key, val in data.items():
         print(' ')
 ```
 
-## Circular Buffer
-
-This is perhaps a little out of place, but I use circular buffers with handling data
-so I stuck it in this library.
-
-```python
-from the_collector import CircularBuffer
-
-cb = CircularBuffer(60)  # can only hold 60 items before it copies over data
-
-# Let's push way more than 60 things
-for i in range(200):
-    cb.push(i)
-
-print(cb.get_all())  # print everything
-print('get cb[7]', cb[7])
-print('get cb[0]', cb[0])
-print('get last', cb.get_last())
-```
-
 ## Data Tuple
 
 Use a generic `namedtuple` for data storage. It will automatically insert a
@@ -130,20 +110,11 @@ print("Data[{}]: {}".format(d.timestamp, d.data))
 print("Namedtuple output:", d)
 ```
 
-# Todo
-
-- [x] add github actions
-- [ ] look at enabling `BytesIO` for testing/working so you don't litter filing system
-with test bag files
-- [x] support PEP517 and replace `setup.py` with `pyprogram.toml`
-- [x] move tests from `nose` to `pytest`
-- [x] remove `msgpack`, there is no advantage to it over `pickle`(python only) or `json`(cross platform)
-- [x] add `json` compression back in
-
 # Change Log
 
 Date        | Version| Notes
 ------------|--------|----------------------------------
+2021-11-24  | 0.9.0  | removed circular buffer and updated python
 2020-04-19  | 0.8.5  | removed `msgpack`
 2019-07-06  | 0.8.2  | add generic data container
 2019-04-28  | 0.8.0  | can store data using `json`, `pickle`, or `msgpack`
