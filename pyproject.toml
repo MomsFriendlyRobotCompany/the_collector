@@ -24,9 +24,13 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = ">=3.8"
+numpy = { version = "*", optional = true }
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
+
+[tool.poetry.extras]
+numpy = ["numpy"]
 
 [build-system]
 requires = ["poetry>=1.0.0"]

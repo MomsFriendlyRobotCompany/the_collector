@@ -6,16 +6,17 @@
 # from the_collector.circular_buffer import CircularBuffer
 from the_collector.bagit import BagIt
 from the_collector.protocols import Pickle
+from the_collector.protocols import Json
 from the_collector.data import Data
 # from the_collector.utils import bag_info
 # from colorama import Fore
 
 
-# try:
-#     import numpy as np
-#     from the_collector.extra_numpy import array_pack, array_unpack
-# except ImportError:
-#     pass
+try:
+    import numpy as np
+    from the_collector.extra_numpy import array_pack, array_unpack
+except ImportError:
+    pass
 
 # try:
 #     import msgpack
