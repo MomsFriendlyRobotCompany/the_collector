@@ -4,17 +4,20 @@
 # see LICENSE for full details
 ##############################################
 import pickle
-import simplejson as json
 import io    # gzip to string
 import gzip  # compression
-import attr
 
+try:
+    import simplejson as json
+except ImportError:
+    import json
 
-@attr.s(slots=True)
 class Pickle:
-    # def __init__(self):
-    #     self.proto = "pickle"
-    proto = attr.ib(init=False, default="pickle")
+    __slots__ = ("proto")
+
+    def __init__(self):
+        self.proto = "pickle"
+    # proto = attr.ib(init=False, default="pickle")
 
     def pack(self, data):
         return pickle.dumps(data)
@@ -26,7 +29,6 @@ class Pickle:
         return data
 
 
-# @attr.s(slots=True)
 class Json:
     def __init__(self, compress=False, use_tuples=True):
         self.use_tuples = use_tuples

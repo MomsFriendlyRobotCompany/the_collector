@@ -8,9 +8,7 @@ test*.json
 .eggs
 .ipynb_checkpoints/
 *.bag
-archive
 old
 .pytest_cache
 .mypy_cache
 *.lock
-

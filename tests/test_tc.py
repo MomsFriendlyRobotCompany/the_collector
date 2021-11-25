@@ -1,13 +1,13 @@
-#!/usr/bin/env python
-from the_collector import CircularBuffer
+#!/usr/bin/env python3
+
+# from the_collector import CircularBuffer
 from the_collector import Data
-import os
 from the_collector import BagIt
 from the_collector import Json, Pickle
 import json
-# import msgpack
 import pickle
 import pytest
+import os
 
 
 def bagfile(kind, compress=False):
@@ -154,19 +154,19 @@ def test_pickle_lib():
     bagfile_rw(Pickle)
 
 
-def test_circularBuff():
-    cb_len = 10
-    cb = CircularBuffer(cb_len)
-    assert len(cb._data) == cb_len
-
-    # should push 0 - 99
-    for i in range(100):
-        cb.push(i)
-
-    # buffer should only have 90-99 in it since it is only 10 in length
-    data = cb.get_all()
-
-    assert len(data) == 10
-
-    for i, p in enumerate(range(90, 100)):
-        assert data[i] == p
+# def test_circularBuff():
+#     cb_len = 10
+#     cb = CircularBuffer(cb_len)
+#     assert len(cb._data) == cb_len
+#
+#     # should push 0 - 99
+#     for i in range(100):
+#         cb.push(i)
+#
+#     # buffer should only have 90-99 in it since it is only 10 in length
+#     data = cb.get_all()
+#
+#     assert len(data) == 10
+#
+#     for i, p in enumerate(range(90, 100)):
+#         assert data[i] == p
