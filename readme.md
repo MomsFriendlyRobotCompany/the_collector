@@ -19,10 +19,10 @@ Read and write data files using pickle, json, gziped
 json, and csv. Method is determined by filename extension.
 Valid extensions are:
 
-    - .pkl: pickle
-    - .json: json
-    - .gzip: json compressed with gzip
-    - .csv: comma separated values
+- .pkl: pickle
+- .json: json
+- .gzip: json compressed with gzip
+- .csv: comma separated values
 
 ## Usage
 
