@@ -11,22 +11,18 @@
 
 **This is still under heavy development**
 
-The idea behind this a container that can store data and time tag the
-data when it is captured. The main structure is a dict which has keys
-for each data series stored.
-
 This was written for a class I taught on robotics. It is meant to be simple and
 teach the students some things. There are probably better solutions out there,
 but I like this.
 
-Additionally, there is nothing magically about what this does:
+Read and write data files using pickle, json, gziped
+json, and csv. Method is determined by filename extension.
+Valid extensions are:
 
-- It provides a generic interface to using `pickle`, `csv`, `json` or `gzip.json` as
-the protocol for saving data to disk
-- It also allows you to convert between them if needed
-- Bag files can be read using the original protocol, thus data is never lost
-if this library goes away
-- Designed to be simple and straight forward
+    - .pkl: pickle
+    - .json: json
+    - .gzip: json compressed with gzip
+    - .csv: comma separated values
 
 ## Usage
 
