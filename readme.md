@@ -2,7 +2,7 @@
 
 # The Collector
 
-[![Actions Status](https://github.com/MomsFriendlyRobotCompany/the-collector/workflows/CheckPackage/badge.svg)](https://github.com/MomsFriendlyRobotCompany/the-collector/actions)
+[![.github/workflows/python.yaml](https://github.com/MomsFriendlyRobotCompany/the_collector/actions/workflows/python.yaml/badge.svg)](https://github.com/MomsFriendlyRobotCompany/the_collector/actions/workflows/python.yaml)
 ![GitHub](https://img.shields.io/github/license/MomsFriendlyRobotCompany/the-collector)
 [![Latest Version](https://img.shields.io/pypi/v/the-collector.svg)](https://pypi.python.org/pypi/the-collector/)
 [![image](https://img.shields.io/pypi/pyversions/the-collector.svg)](https://pypi.python.org/pypi/the-collector)
@@ -32,6 +32,37 @@ if this library goes away
 
 See the [notebook](docs/notebooks/the_collector.ipynb) for examples of how to use
 it.
+
+```python
+from collector import Collector
+
+c = Collector()
+c.timestamp = False
+d = np.array([[1,2,3],[4.,5.,6.]])
+i = {"imu":
+  {
+    "gyro_range": 3000,
+    "accel_range": 2
+  }
+}
+
+c.write("test_test_now.csv",d)
+dd = c.read("test_test_now.csv")
+
+c.write("test_test_now.json",d,i)
+dd = c.read("test_test_now.json")
+
+fname = c.write("test_test_now.pkl",d,i)
+dd = c.read(fname)
+
+c.timestamp = True
+fname = c.write("data/test_test_now.pkl",d,i)
+dd = c.read(fname)
+# Saving 2 data points in pickle to:
+# --> data/2023-08-08T18:57:52_test_test_now.pkl
+# Loaded 2 data points from:
+# --> data/2023-08-08T18:57:52_test_test_now.pkl
+```
 
 # The MIT License (MIT)
 
