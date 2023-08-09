@@ -1,37 +1,36 @@
 [tool.poetry]
 name = "the_collector"
-version = "0.9.0"
-description = "A library to store robot data in common formats"
+version = "2023.08.07"
+description = "A library to store data in common formats"
 authors = ["walchko <walchko@users.noreply.github.com>"]
 readme = "readme.md"
 license = "MIT"
 homepage = "https://pypi.org/project/the-collector/"
 repository = 'http://github.com/MomsFriendlyRobotCompany/the_collector'
 # documentation = "http://..."
-keywords = ['library', 'robotics', 'robot', 'storage', 'json', 'pickle']
+keywords = ['library', 'robotics', 'robot', 'storage', 'json', 'pickle', "gzip", "csv"]
 classifiers = [
     'Development Status :: 4 - Beta',
     'Intended Audience :: Developers',
     'License :: OSI Approved :: MIT License',
     'Operating System :: OS Independent',
-    'Programming Language :: Python :: 3.8',
-    'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
     'Topic :: Software Development :: Libraries',
     'Topic :: Software Development :: Libraries :: Python Modules',
     'Topic :: Software Development :: Libraries :: Application Frameworks'
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.8"
-numpy = { version = "*", optional = true }
+python = ">=3.10"
+# numpy = { version = "*", optional = true }
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
 
-[tool.poetry.extras]
-numpy = ["numpy"]
+# [tool.poetry.extras]
+# numpy = ["numpy"]
 
 [build-system]
-requires = ["poetry>=1.0.0"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
