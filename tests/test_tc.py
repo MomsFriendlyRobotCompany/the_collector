@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 
 # from the_collector import CircularBuffer
-from the_collector import Data
-from the_collector import BagIt
-from the_collector import Json, Pickle
-import json
-import pickle
+from the_collector import *
+# import json
+# import pickle
 import pytest
-import os
+# import os
 
 def test_dummy():
     assert True
