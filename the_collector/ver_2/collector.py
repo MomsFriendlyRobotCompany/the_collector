@@ -114,6 +114,7 @@ class Collector:
         ts = "/"
         if self.timestamp:
             ts += dt.datetime.today().isoformat(timespec='seconds') + "_"
+            ts = ts.replace(':','.')
         fname = str(p.parent) + ts + str(p.name)
         p = Path(fname)
         return p
