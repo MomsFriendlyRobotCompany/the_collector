@@ -20,7 +20,7 @@ class Collector:
     Valid extensions are:
       .pkl: pickle
       .json: json
-      .gzip: json compressed with gzip
+      .gzip: json compressed with gzip [default]
       .csv: comma separated values
     """
     def read(self, fname):
@@ -70,9 +70,10 @@ class Collector:
                 return
 
         if info is None:
-            save = {"data": data}
-        else:
-            save = {"info": info, "data": data}
+            info = {}
+
+        info["timestamp"] = str(dt.datetime.now().isoformat())
+        save = {"info": info, "data": data}
 
         p = self.__set_name(fname)
         suffix = p.suffix
@@ -102,9 +103,12 @@ class Collector:
                 with open(fname, 'w', newline='') as fd:
                     writer = csv.writer(fd, quoting = csv.QUOTE_NONNUMERIC)
                     writer.writerows(data)
-            case _:
-                print(f"{suffix} is invalid")
-                return None
+            case _ :
+                fname += ".gzip"
+                print(f"Assuming gzip, file name is: {fname}")
+                fmt = "json gzip"
+                with gzip.open(fname, 'wt', encoding="ascii") as fd:
+                    json.dump(save, fd)
 
         print(f"Saving {len(data)} data points in {fmt} to:\n--> {fname}")
         return fname
@@ -113,11 +117,13 @@ class Collector:
         p = Path(fname)
         ts = "/"
         if self.timestamp:
-            ts += dt.datetime.today().isoformat(timespec='seconds') + "_"
+            ts += dt.datetime.today().isoformat(sep='_', timespec='seconds') + "_"
             ts = ts.replace(':','.')
         fname = str(p.parent) + ts + str(p.name)
         p = Path(fname)
         return p
+
+
 
 def nuke(path=".", patterns=None, recursive=False):
     """

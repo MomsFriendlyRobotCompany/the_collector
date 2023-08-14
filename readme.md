@@ -21,7 +21,7 @@ Valid extensions are:
 
 - .pkl: pickle
 - .json: json
-- .gzip: json compressed with gzip
+- .gzip: json compressed with gzip [default]
 - .csv: comma separated values
 
 ## Usage
@@ -55,9 +55,9 @@ c.timestamp = True
 fname = c.write("data/test_test_now.pkl",d,i)
 dd = c.read(fname)
 # Saving 2 data points in pickle to:
-# --> data/2023-08-08T18:57:52_test_test_now.pkl
+# --> data/2023-08-08_18:57:52_test_test_now.pkl
 # Loaded 2 data points from:
-# --> data/2023-08-08T18:57:52_test_test_now.pkl
+# --> data/2023-08-08_18:57:52_test_test_now.pkl
 ```
 
 # The MIT License (MIT)
