@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "the_collector"
-version = "2023.08.13"
+version = "2023.08.26"
 description = "A library to store data in common formats"
 authors = ["walchko <walchko@users.noreply.github.com>"]
 readme = "readme.md"
@@ -23,13 +23,9 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = ">=3.10"
-# numpy = { version = "*", optional = true }
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
-
-# [tool.poetry.extras]
-# numpy = ["numpy"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

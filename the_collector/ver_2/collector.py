@@ -62,12 +62,12 @@ class Collector:
           data: list of sampled data
           info: optional dictonary providing useful info about data
         """
-        if not isinstance(data,list):
-            try:
-                data = data.tolist()
-            except:
-                print("*** data needs to be a list ***")
-                return
+        # if not isinstance(data,list):
+        #     try:
+        #         data = data.tolist()
+        #     except:
+        #         print("*** data needs to be a list ***")
+        #         return
 
         if info is None:
             info = {}
@@ -75,10 +75,12 @@ class Collector:
         info["timestamp"] = str(dt.datetime.now().isoformat())
         save = {"info": info, "data": data}
 
+        # print(">>", fname)
+
         p = self.__set_name(fname)
         suffix = p.suffix
         fname = str(p)
-        # print(suffix, fname)
+        # print(">>",suffix, fname)
         # return
 
         match suffix:
@@ -110,15 +112,16 @@ class Collector:
                 with gzip.open(fname, 'wt', encoding="ascii") as fd:
                     json.dump(save, fd)
 
-        print(f"Saving {len(data)} data points in {fmt} to:\n--> {fname}")
+        print(f"Saving data points in {fmt} to:\n--> {fname}")
         return fname
 
     def __set_name(self, fname):
         p = Path(fname)
+        # print(">>", p.name, str(p))
         ts = "/"
         if self.timestamp:
             ts += dt.datetime.today().isoformat(sep='_', timespec='seconds') + "_"
-            ts = ts.replace(':','.')
+            ts = ts.replace(':','-')
         fname = str(p.parent) + ts + str(p.name)
         p = Path(fname)
         return p
